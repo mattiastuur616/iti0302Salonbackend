@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -11,6 +13,7 @@ import lombok.Setter;
 public class Cosmetic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cosmetic_id")
     private Long cosmeticId;
 
     @Column(name = "first_name")
@@ -24,4 +27,7 @@ public class Cosmetic {
 
     @Column(name = "email")
     private String email;
+
+    @OneToMany
+    private List<SalonService> serviceList;
 }

@@ -1,15 +1,11 @@
 package ee.taltech.iti03022023salonbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +14,7 @@ import java.sql.Date;
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "client_id")
     private Long clientId;
 
     @Column(name = "first_name")
@@ -43,4 +40,7 @@ public class Client {
 
     @Column(name = "home_address")
     private String homeAddress;
+
+    @OneToMany
+    private List<Registration> registrationList;
 }
