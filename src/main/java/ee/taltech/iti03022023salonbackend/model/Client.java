@@ -40,7 +40,4 @@ public class Client {
 
     @Column(name = "home_address")
     private String homeAddress;
-
-    @OneToMany
-    private List<Registration> registrationList;
 }
