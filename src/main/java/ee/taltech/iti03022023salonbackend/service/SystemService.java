@@ -140,6 +140,24 @@ public class SystemService {
     }
 
     /**
+     * Method for showing every service that is performed by the specific cosmetic.
+     *
+     * @param id of the cosmetic
+     * @return the list of services performed by that cosmetic
+     */
+    public List<SalonServiceDto> getAllServicesOfCosmetic(Long id) {
+        List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
+        Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
+        if (existingCosmetic.isEmpty()) {
+            return null;
+        }
+        for (SalonService salonService : salonServiceRepository.findAllByCosmetic(existingCosmetic.get())) {
+            salonServiceDtoList.add(convertIntoSalonServiceDto(salonService));
+        }
+        return salonServiceDtoList;
+    }
+
+    /**
      * Help function to convert the original object into the data transfer object.
      *
      * @param cosmetic to be converted

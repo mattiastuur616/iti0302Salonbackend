@@ -87,6 +87,17 @@ public class SystemController {
         return systemService.removeCosmetic(id);
     }
 
+    /**
+     * Get request for showing every service one cosmetic is about to be part of.
+     *
+     * @param id of the cosmetic
+     * @return the list of services
+     */
+    @GetMapping("/allTasks/{id}")
+    public List<SalonServiceDto> getAllServicesOfCosmetic(@PathVariable Long id) {
+        return systemService.getAllServicesOfCosmetic(id);
+    }
+
 
     // Requests of the salon services.
 
