@@ -108,7 +108,7 @@ public class SystemController {
      */
     @GetMapping("/allServices")
     public List<SalonServiceDto> getAllSalonServices() {
-        return systemService.getAllSalonService();
+        return systemService.getAllSalonServices();
     }
 
     /**
@@ -131,5 +131,32 @@ public class SystemController {
     @DeleteMapping("/removeService/{id}")
     public String removeSalonService(@PathVariable Long id) {
         return systemService.removeSalonService(id);
+    }
+
+
+    // Requests of the registrations.
+
+    /**
+     * Post request for registering a service for the client.
+     *
+     * @param clientId of the client who registers the service
+     * @param serviceId of the service to be registered
+     * @return the string explaining the result
+     */
+    @PostMapping("/registerService")
+    public String registerService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+        return systemService.registerService(clientId, serviceId);
+    }
+
+    /**
+     * Delete request for canceling the registration.
+     *
+     * @param clientId of the client who cancels the service
+     * @param serviceId of the service to be canceled
+     * @return the string explaining the result
+     */
+    @DeleteMapping("/cancelService")
+    public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+        return systemService.cancelService(clientId, serviceId);
     }
 }
