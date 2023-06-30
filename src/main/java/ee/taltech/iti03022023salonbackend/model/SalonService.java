@@ -40,7 +40,4 @@ public class SalonService {
     @ManyToOne
     @JoinColumn(name = "cosmetic_id")
     private Cosmetic cosmetic;
-
-    @OneToMany
-    private List<Registration> registrationList;
 }
