@@ -159,4 +159,16 @@ public class SystemController {
     public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) {
         return systemService.cancelService(clientId, serviceId);
     }
+
+    /**
+     * Put request for finishing the registration.
+     *
+     * @param clientId of the client whose registration will be finished
+     * @param serviceId of the service to be finished
+     * @return the string explaining the result
+     */
+    @PutMapping("/finishService")
+    public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+        return systemService.finishService(clientId, serviceId);
+    }
 }
