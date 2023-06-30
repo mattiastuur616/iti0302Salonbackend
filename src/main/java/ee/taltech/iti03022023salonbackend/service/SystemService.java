@@ -76,6 +76,27 @@ public class SystemService {
     }
 
     /**
+     * Method for showing the history of all the services that client has registered.
+     *
+     * @param id of the client
+     * @return the list of services either finished or not canceled by the client
+     */
+    public List<SalonServiceDto> getHistoryOfRegisteredServices(Long id) {
+        List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
+        Optional<Client> existingClient = clientRepository.findById(id);
+        if (existingClient.isEmpty()) {
+            return null;
+        }
+        Client client = existingClient.get();
+        for (Registration registration : registrationRepository.findAll()) {
+            if (registration.getClient().getClientId().equals(client.getClientId())) {
+                salonServiceDtoList.add(convertIntoSalonServiceDto(registration.getSalonService()));
+            }
+        }
+        return salonServiceDtoList;
+    }
+
+    /**
      * Help function to convert original client object into the data transfer object.
      *
      * @param client to be converted

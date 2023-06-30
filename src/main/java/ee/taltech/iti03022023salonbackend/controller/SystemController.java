@@ -52,6 +52,18 @@ public class SystemController {
         return systemService.removeClient(id);
     }
 
+    /**
+     * Get request for showing all the services that client had registered
+     * and are either finished or not cancelled yet.
+     *
+     * @param id of the client
+     * @return the list of services
+     */
+    @GetMapping("/getHistory/{id}")
+    public List<SalonServiceDto> getHistoryOfRegisteredServices(@PathVariable Long id) {
+        return systemService.getHistoryOfRegisteredServices(id);
+    }
+
 
     // Requests of the cosmetics.
 
