@@ -6,6 +6,7 @@ import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class SystemService {
      *
      * @return the list of clients
      */
+    @Transactional
     public List<ClientDto> getAllClients() {
         List<ClientDto> clientDtoList = new ArrayList<>();
         for (Client client : clientRepository.findAll()) {
@@ -49,6 +51,7 @@ public class SystemService {
      * @param client to be added
      * @return the string explaining the result
      */
+    @Transactional
     public String addClient(Client client) {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(client.getEmail());
         if (existingClient.isPresent()) {
@@ -65,6 +68,7 @@ public class SystemService {
      * @param id of the client to be removed
      * @return the string explaining the result
      */
+    @Transactional
     public String removeClient(Long id) {
         Optional<Client> existingClient = clientRepository.findById(id);
         if (existingClient.isEmpty()) {
@@ -81,6 +85,7 @@ public class SystemService {
      * @param id of the client
      * @return the list of services either finished or not canceled by the client
      */
+    @Transactional
     public List<SalonServiceDto> getHistoryOfRegisteredServices(Long id) {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         Optional<Client> existingClient = clientRepository.findById(id);
@@ -116,6 +121,7 @@ public class SystemService {
      *
      * @return the list of cosmetics
      */
+    @Transactional
     public List<CosmeticDto> getAllCosmetics() {
         List<CosmeticDto> cosmeticDtoList = new ArrayList<>();
         for (Cosmetic cosmetic : cosmeticRepository.findAll()) {
@@ -132,6 +138,7 @@ public class SystemService {
      * @param cosmetic to be added
      * @return the string explaining the result
      */
+    @Transactional
     public String addCosmetic(Cosmetic cosmetic) {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findCosmeticsByEmailIgnoreCase(cosmetic.getEmail());
         if (existingCosmetic.isPresent()) {
@@ -149,6 +156,7 @@ public class SystemService {
      * @param id of the cosmetic to be removed
      * @return the string explaining the result
      */
+    @Transactional
     public String removeCosmetic(Long id) {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
         if (existingCosmetic.isEmpty()) {
@@ -166,6 +174,7 @@ public class SystemService {
      * @param id of the cosmetic
      * @return the list of services performed by that cosmetic
      */
+    @Transactional
     public List<SalonServiceDto> getAllServicesOfCosmetic(Long id) {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
@@ -197,6 +206,7 @@ public class SystemService {
      *
      * @return the list of services
      */
+    @Transactional
     public List<SalonServiceDto> getAllSalonServices() {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         for (SalonService salonService : salonServiceRepository.findAll()) {
@@ -211,6 +221,7 @@ public class SystemService {
      * @param salonService to be added
      * @return the string explaining the result
      */
+    @Transactional
     public String addSalonService(SalonService salonService) {
         Optional<SalonService> existingSalonService = salonServiceRepository
                 .getSalonServicesByCosmeticAndAndStartingTime(salonService.getCosmetic(), salonService.getStartingTime());
@@ -236,6 +247,7 @@ public class SystemService {
      * @param id of the service to be removed
      * @return the string explaining the result
      */
+    @Transactional
     public String removeSalonService(Long id) {
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(id);
         if (existingSalonService.isEmpty()) {
@@ -269,6 +281,7 @@ public class SystemService {
      *
      * @return the list of registrations
      */
+    @Transactional
     public List<RegistrationDto> getAllRegistrations() {
         List<RegistrationDto> registrationDtoList = new ArrayList<>();
         for (Registration registration : registrationRepository.findAll()) {
@@ -284,6 +297,7 @@ public class SystemService {
      * @param serviceId of the service to be registered
      * @return the string explaining the result
      */
+    @Transactional
     public String registerService(Long clientId, Long serviceId) {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
@@ -326,6 +340,7 @@ public class SystemService {
      * @param serviceId of the service to be canceled
      * @return the string explaining the result
      */
+    @Transactional
     public String cancelService(Long clientId, Long serviceId) {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
@@ -366,6 +381,7 @@ public class SystemService {
      * @param serviceId of the service to be finished
      * @return the string explaining the result
      */
+    @Transactional
     public String finishService(Long clientId, Long serviceId) {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
