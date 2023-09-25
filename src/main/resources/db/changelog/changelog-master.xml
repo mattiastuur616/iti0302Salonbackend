@@ -107,4 +107,14 @@
             )
         </sql>
     </changeSet>
+    <changeSet id="25-09-2023-18:12" author="mattuu">
+        <sql>
+            create table Users(
+                user_id serial,
+                password varchar(30) unique not null ,
+                constraint pk_user_id primary key (user_id),
+                constraint fk_user_id_client_id foreign key (user_id) references Client(client_id)
+            )
+        </sql>
+    </changeSet>
 </databaseChangeLog>

@@ -1,9 +1,6 @@
 package ee.taltech.iti03022023salonbackend.service;
 
-import ee.taltech.iti03022023salonbackend.dto.ClientDto;
-import ee.taltech.iti03022023salonbackend.dto.CosmeticDto;
-import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
-import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
+import ee.taltech.iti03022023salonbackend.dto.*;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.repository.*;
 import jakarta.transaction.Transactional;
@@ -25,6 +22,7 @@ public class SystemService {
     private final SalonServiceRepository salonServiceRepository;
     private final ServiceStatusRepository serviceStatusRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+    private final UserRepository userRepository;
 
 
     // Functions with the clients.
@@ -44,6 +42,20 @@ public class SystemService {
     }
 
     /**
+     * Method for showing all the users owned by registered clients.
+     *
+     * @return the list of users
+     */
+    @Transactional
+    public List<UserDto> getAllUsers() {
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : userRepository.findAll()) {
+            userDtoList.add(convertIntoUserDto(user));
+        }
+        return userDtoList;
+    }
+
+    /**
      * Method for adding a new client to the database.
      * Because of every client has to have their unique email address, function will check
      * if the database doesn't already have a client with the same email.
@@ -52,13 +64,20 @@ public class SystemService {
      * @return the string explaining the result
      */
     @Transactional
-    public String addClient(Client client) {
+    public String addClient(Client client, String password) {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(client.getEmail());
+        Optional<User> existingUser = userRepository.findUsersByPasswordIgnoreCase(password);
         if (existingClient.isPresent()) {
             return "Client already exists in the database.";
+        } else if (existingUser.isPresent()) {
+            return "Password already in use.";
         }
         clientRepository.save(client);
-        return "New client " + client.getFirstName() + " " + client.getLastName() + " was successfully added.";
+        User newUser = new User();
+        newUser.setPassword(password);
+        newUser.setUserId(client.getClientId());
+        userRepository.save(newUser);
+        return client.getFirstName() + " " + client.getLastName();
     }
 
     /**
@@ -111,6 +130,16 @@ public class SystemService {
         return new ClientDto(client.getClientId(), client.getFirstName(), client.getLastName(), client.getMoney(),
                 client.getPhoneNumber(), client.getEmail(), client.getIdCode(), client.getDateOfBirth(),
                 client.getHomeAddress());
+    }
+
+    /**
+     * Help function to convert original user object into the data transfer object.
+     *
+     * @param user to be converted
+     * @return dto of the original user object
+     */
+    public UserDto convertIntoUserDto(User user) {
+        return new UserDto(user.getUserId(), user.getPassword());
     }
 
 

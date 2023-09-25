@@ -3,15 +3,19 @@ package ee.taltech.iti03022023salonbackend.controller;
 import ee.taltech.iti03022023salonbackend.dto.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
+import ee.taltech.iti03022023salonbackend.dto.UserDto;
 import ee.taltech.iti03022023salonbackend.model.Client;
 import ee.taltech.iti03022023salonbackend.model.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.SalonService;
+import ee.taltech.iti03022023salonbackend.model.User;
 import ee.taltech.iti03022023salonbackend.service.SystemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
 
+@CrossOrigin
 @RequiredArgsConstructor
 @RestController
 public class SystemController {
@@ -31,14 +35,22 @@ public class SystemController {
     }
 
     /**
+     * Get request for showing all the users owned by the clients.
+     *
+     * @return the list of users
+     */
+    @GetMapping("/allUsers")
+    public List<UserDto> getAllUsers() {return systemService.getAllUsers();}
+
+    /**
      * Post request for adding a new client to the salon.
      *
      * @param client to be added
      * @return the string explaining the result
      */
     @PostMapping("/addClient")
-    public String addClient(@RequestBody Client client) {
-        return systemService.addClient(client);
+    public String addClient(@RequestBody Client client, @RequestParam String password) {
+        return systemService.addClient(client, password);
     }
 
     /**
