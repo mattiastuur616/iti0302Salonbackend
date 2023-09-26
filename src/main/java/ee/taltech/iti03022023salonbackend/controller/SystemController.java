@@ -54,6 +54,29 @@ public class SystemController {
     }
 
     /**
+     * Get request for showing client's name.
+     *
+     * @param email of the client
+     * @return string of full name
+     */
+    @GetMapping("/clientName")
+    public String getClientName(@RequestParam String email) {
+        return systemService.getClientName(email);
+    }
+
+    /**
+     * Get request for user to log in.
+     *
+     * @param email email
+     * @param password password
+     * @return boolean
+     */
+    @GetMapping("/isValid")
+    public boolean isValidClient(@RequestParam String email, @RequestParam String password) {
+        return systemService.isValidClient(email, password);
+    }
+
+    /**
      * Delete request for removing the client from the salon.
      *
      * @param id of the client to be removed

@@ -117,4 +117,22 @@
             )
         </sql>
     </changeSet>
+    <changeSet id="26-09-2023-17:46" author="mattuu">
+        <sql>
+            alter table Users
+            drop constraint fk_user_id_client_id
+        </sql>
+    </changeSet>
+    <changeSet id="26-09-2023-17:50" author="mattuu">
+        <sql>
+            alter table Users
+            add column client_id int
+        </sql>
+    </changeSet>
+    <changeSet id="26-09-2023-17:53" author="mattuu">
+        <sql>
+            alter table Users
+            add constraint fk_client_id_client_id foreign key (client_id) references Client(client_id)
+        </sql>
+    </changeSet>
 </databaseChangeLog>

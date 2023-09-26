@@ -75,9 +75,46 @@ public class SystemService {
         clientRepository.save(client);
         User newUser = new User();
         newUser.setPassword(password);
-        newUser.setUserId(client.getClientId());
+        newUser.setClientId(client.getClientId());
         userRepository.save(newUser);
         return client.getFirstName() + " " + client.getLastName();
+    }
+
+    /**
+     * Method used when logging in.
+     * It checks whether the user has put correct credentials.
+     *
+     * @param email of user
+     * @param password of user
+     * @return boolean
+     */
+    public boolean isValidClient(String email, String password) {
+        Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
+        if (existingClient.isEmpty()) {
+            return false;
+        }
+        Client client = existingClient.get();
+        Optional<User> existingUser = userRepository.findUsersByClientId(client.getClientId());
+        if (existingUser.isEmpty()) {
+            return false;
+        }
+        User user = existingUser.get();
+        return user.getPassword().equals(password);
+    }
+
+    /**
+     * Method for getting client's name
+     *
+     * @param email of client
+     * @return string of client's name
+     */
+    public String getClientName(String email) {
+        Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
+        if (existingClient.isEmpty()) {
+            return "Error";
+        }
+        Client actualClient = existingClient.get();
+        return actualClient.getFirstName() + " " + actualClient.getLastName();
     }
 
     /**
@@ -139,7 +176,7 @@ public class SystemService {
      * @return dto of the original user object
      */
     public UserDto convertIntoUserDto(User user) {
-        return new UserDto(user.getUserId(), user.getPassword());
+        return new UserDto(user.getUserId(), user.getClientId(), user.getPassword());
     }
 
 

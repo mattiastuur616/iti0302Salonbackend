@@ -8,10 +8,12 @@ import lombok.Setter;
 public class UserDto {
 
     private Long userId;
+    private Long clientId;
     private String password;
 
-    public UserDto(Long userId, String password) {
+    public UserDto(Long userId, Long clientId, String password) {
         this.userId = userId;
+        this.clientId = clientId;
         this.password = password;
     }
 }

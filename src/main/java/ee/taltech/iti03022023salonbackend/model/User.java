@@ -14,6 +14,9 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "client_id")
+    private Long clientId;
+
     @Column(name = "password")
     private String password;
 }
