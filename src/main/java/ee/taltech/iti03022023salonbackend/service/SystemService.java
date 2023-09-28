@@ -282,6 +282,18 @@ public class SystemService {
     }
 
     /**
+     * Method for getting data of one service.
+     *
+     * @param id of the service
+     * @return dto of the service
+     */
+    @Transactional
+    public SalonServiceDto getSalonServiceById(Long id) {
+        Optional<SalonService> service = salonServiceRepository.findById(id);
+        return service.map(this::convertIntoSalonServiceDto).orElse(null);
+    }
+
+    /**
      * Method for adding a new service to the database.
      *
      * @param salonService to be added

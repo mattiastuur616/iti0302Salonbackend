@@ -159,6 +159,17 @@ public class SystemController {
     }
 
     /**
+     * Get request for getting data about one specific service.
+     *
+     * @param id of the service
+     * @return dto of the service
+     */
+    @GetMapping("/service/{id}")
+    public SalonServiceDto getSalonServiceById(@PathVariable Long id) {
+        return systemService.getSalonServiceById(id);
+    }
+
+    /**
      * Post request for adding a new service to the salon.
      *
      * @param salonService to be added
