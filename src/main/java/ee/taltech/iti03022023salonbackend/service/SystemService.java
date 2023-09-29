@@ -42,6 +42,22 @@ public class SystemService {
     }
 
     /**
+     * Method for receiving client's id.
+     *
+     * @param email of the client
+     * @return client's id
+     */
+    @Transactional
+    public Long getClientId(String email) {
+        Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
+        if (existingClient.isEmpty()) {
+            return null;
+        }
+        Client actualClient = existingClient.get();
+        return actualClient.getClientId();
+    }
+
+    /**
      * Method for showing all the users owned by registered clients.
      *
      * @return the list of users
@@ -197,6 +213,18 @@ public class SystemService {
     }
 
     /**
+     * Method for getting one cosmetic by id.
+     *
+     * @param id of the cosmetic
+     * @return cosmetic dto
+     */
+    @Transactional
+    public CosmeticDto getCosmetic(Long id) {
+        Optional<Cosmetic> cosmetic = cosmeticRepository.findById(id);
+        return cosmetic.map(this::convertIntoCosmeticDto).orElse(null);
+    }
+
+    /**
      * Method for adding a new cosmetic into the database.
      * Because of each one of the cosmetic needs to own unique email address the function check
      * if there isn't already existing cosmetic with that email.
@@ -279,6 +307,22 @@ public class SystemService {
             salonServiceDtoList.add(convertIntoSalonServiceDto(salonService));
         }
         return salonServiceDtoList;
+    }
+
+    /**
+     * Method for getting all available services the users can register.
+     *
+     * @return the list of available services
+     */
+    @Transactional
+    public List<SalonServiceDto> getAvailableSalonServices() {
+        List<SalonServiceDto> availableServices = new ArrayList<>();
+        for (SalonServiceDto serviceDto : getAllSalonServices()) {
+            if (serviceDto.getStatusId() == 1) {
+                availableServices.add(serviceDto);
+            }
+        }
+        return availableServices;
     }
 
     /**
@@ -405,8 +449,8 @@ public class SystemService {
         LocalDate now = LocalDate.now();
         registration.setRegistrationDate(Date.valueOf(now));
         registrationRepository.save(registration);
-        return "The service has been registered by " + client.getFirstName() + " " + client.getLastName() + ". " +
-                "Their cosmetic will be " + salonService.getCosmetic().getFirstName() + " " +
+        return "You have successfully registered the service! " +
+                "Your cosmetic will be " + salonService.getCosmetic().getFirstName() + " " +
                 salonService.getCosmetic().getLastName() + ".";
     }
 

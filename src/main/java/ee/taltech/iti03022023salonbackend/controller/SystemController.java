@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Date;
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
 public class SystemController {
@@ -32,6 +32,17 @@ public class SystemController {
     @GetMapping("/allClients")
     public List<ClientDto> getAllClients() {
         return systemService.getAllClients();
+    }
+
+    /**
+     * Get request for showing one client's data.
+     *
+     * @param email of the client
+     * @return client dto
+     */
+    @GetMapping("/getClient")
+    public Long getClientId(@RequestParam String email) {
+        return systemService.getClientId(email);
     }
 
     /**
@@ -113,6 +124,17 @@ public class SystemController {
     }
 
     /**
+     * Get request for showing data about one cosmetic.
+     *
+     * @param id of the cosmetic
+     * @return cosmetic dto
+     */
+    @GetMapping("/cosmetic/{id}")
+    public CosmeticDto getCosmetic(@PathVariable Long id) {
+        return systemService.getCosmetic(id);
+    }
+
+    /**
      * Post request for adding a new cosmetic to the salon.
      *
      * @param cosmetic to be added
@@ -156,6 +178,16 @@ public class SystemController {
     @GetMapping("/allServices")
     public List<SalonServiceDto> getAllSalonServices() {
         return systemService.getAllSalonServices();
+    }
+
+    /**
+     * Get request for showing all available services.
+     *
+     * @return the list of available services
+     */
+    @GetMapping("/availableServices")
+    public List<SalonServiceDto> getAvailableSalonServices() {
+        return systemService.getAvailableSalonServices();
     }
 
     /**
