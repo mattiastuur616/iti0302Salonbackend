@@ -491,7 +491,7 @@ public class SystemService {
         }
         Registration registration = existingRegistration.get();
         registrationRepository.delete(registration);
-        return "Registration with the id " + registration.getRegistrationId() + " was canceled in the salon.";
+        return "Registration is canceled.";
     }
 
     /**
