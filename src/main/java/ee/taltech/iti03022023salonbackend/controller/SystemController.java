@@ -7,19 +7,23 @@ import ee.taltech.iti03022023salonbackend.dto.UserDto;
 import ee.taltech.iti03022023salonbackend.model.Client;
 import ee.taltech.iti03022023salonbackend.model.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.SalonService;
-import ee.taltech.iti03022023salonbackend.model.User;
-import ee.taltech.iti03022023salonbackend.service.SystemService;
+import ee.taltech.iti03022023salonbackend.service.ClientService;
+import ee.taltech.iti03022023salonbackend.service.CosmeticService;
+import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
+import ee.taltech.iti03022023salonbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
 public class SystemController {
-    private final SystemService systemService;
+    private final RegistrationService registrationService;
+    private final ClientService clientService;
+    private final CosmeticService cosmeticService;
+    private final ServiceOfServices serviceOfServices;
 
 
     // Requests of the clients.
@@ -31,7 +35,7 @@ public class SystemController {
      */
     @GetMapping("/allClients")
     public List<ClientDto> getAllClients() {
-        return systemService.getAllClients();
+        return clientService.getAllClients();
     }
 
     /**
@@ -42,7 +46,7 @@ public class SystemController {
      */
     @GetMapping("/getClient")
     public Long getClientId(@RequestParam String email) {
-        return systemService.getClientId(email);
+        return clientService.getClientId(email);
     }
 
     /**
@@ -51,7 +55,7 @@ public class SystemController {
      * @return the list of users
      */
     @GetMapping("/allUsers")
-    public List<UserDto> getAllUsers() {return systemService.getAllUsers();}
+    public List<UserDto> getAllUsers() {return clientService.getAllUsers();}
 
     /**
      * Post request for adding a new client to the salon.
@@ -61,7 +65,7 @@ public class SystemController {
      */
     @PostMapping("/addClient")
     public String addClient(@RequestBody Client client, @RequestParam String password) {
-        return systemService.addClient(client, password);
+        return clientService.addClient(client, password);
     }
 
     /**
@@ -72,7 +76,7 @@ public class SystemController {
      */
     @GetMapping("/clientName")
     public String getClientName(@RequestParam String email) {
-        return systemService.getClientName(email);
+        return clientService.getClientName(email);
     }
 
     /**
@@ -84,7 +88,7 @@ public class SystemController {
      */
     @GetMapping("/isValid")
     public boolean isValidClient(@RequestParam String email, @RequestParam String password) {
-        return systemService.isValidClient(email, password);
+        return clientService.isValidClient(email, password);
     }
 
     /**
@@ -95,7 +99,7 @@ public class SystemController {
      */
     @DeleteMapping("/removeClient/{id}")
     public String removeClient(@PathVariable Long id) {
-        return systemService.removeClient(id);
+        return clientService.removeClient(id);
     }
 
     /**
@@ -107,7 +111,7 @@ public class SystemController {
      */
     @GetMapping("/getHistory/{id}")
     public List<SalonServiceDto> getHistoryOfRegisteredServices(@PathVariable Long id) {
-        return systemService.getHistoryOfRegisteredServices(id);
+        return clientService.getHistoryOfRegisteredServices(id);
     }
 
 
@@ -120,7 +124,7 @@ public class SystemController {
      */
     @GetMapping("/allCosmetics")
     public List<CosmeticDto> getAllCosmetics() {
-        return systemService.getAllCosmetics();
+        return cosmeticService.getAllCosmetics();
     }
 
     /**
@@ -131,7 +135,7 @@ public class SystemController {
      */
     @GetMapping("/cosmetic/{id}")
     public CosmeticDto getCosmetic(@PathVariable Long id) {
-        return systemService.getCosmetic(id);
+        return cosmeticService.getCosmetic(id);
     }
 
     /**
@@ -142,7 +146,7 @@ public class SystemController {
      */
     @PostMapping("/addCosmetic")
     public String addCosmetic(@RequestBody Cosmetic cosmetic) {
-        return systemService.addCosmetic(cosmetic);
+        return cosmeticService.addCosmetic(cosmetic);
     }
 
     /**
@@ -153,7 +157,7 @@ public class SystemController {
      */
     @DeleteMapping("/removeCosmetic/{id}")
     public String removeCosmetic(@PathVariable Long id) {
-        return systemService.removeCosmetic(id);
+        return cosmeticService.removeCosmetic(id);
     }
 
     /**
@@ -164,7 +168,7 @@ public class SystemController {
      */
     @GetMapping("/allTasks/{id}")
     public List<SalonServiceDto> getAllServicesOfCosmetic(@PathVariable Long id) {
-        return systemService.getAllServicesOfCosmetic(id);
+        return cosmeticService.getAllServicesOfCosmetic(id);
     }
 
 
@@ -177,7 +181,7 @@ public class SystemController {
      */
     @GetMapping("/allServices")
     public List<SalonServiceDto> getAllSalonServices() {
-        return systemService.getAllSalonServices();
+        return serviceOfServices.getAllSalonServices();
     }
 
     /**
@@ -187,7 +191,7 @@ public class SystemController {
      */
     @GetMapping("/availableServices")
     public List<SalonServiceDto> getAvailableSalonServices() {
-        return systemService.getAvailableSalonServices();
+        return serviceOfServices.getAvailableSalonServices();
     }
 
     /**
@@ -198,7 +202,7 @@ public class SystemController {
      */
     @GetMapping("/service/{id}")
     public SalonServiceDto getSalonServiceById(@PathVariable Long id) {
-        return systemService.getSalonServiceById(id);
+        return serviceOfServices.getSalonServiceById(id);
     }
 
     /**
@@ -209,7 +213,7 @@ public class SystemController {
      */
     @PostMapping("/addService")
     public String addSalonService(@RequestBody SalonService salonService) {
-        return systemService.addSalonService(salonService);
+        return serviceOfServices.addSalonService(salonService);
     }
 
     /**
@@ -220,7 +224,7 @@ public class SystemController {
      */
     @DeleteMapping("/removeService/{id}")
     public String removeSalonService(@PathVariable Long id) {
-        return systemService.removeSalonService(id);
+        return serviceOfServices.removeSalonService(id);
     }
 
 
@@ -235,7 +239,7 @@ public class SystemController {
      */
     @PostMapping("/registerService")
     public String registerService(@RequestParam Long clientId, @RequestParam Long serviceId) {
-        return systemService.registerService(clientId, serviceId);
+        return registrationService.registerService(clientId, serviceId);
     }
 
     /**
@@ -247,7 +251,7 @@ public class SystemController {
      */
     @DeleteMapping("/cancelService")
     public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) {
-        return systemService.cancelService(clientId, serviceId);
+        return registrationService.cancelService(clientId, serviceId);
     }
 
     /**
@@ -259,6 +263,6 @@ public class SystemController {
      */
     @PutMapping("/finishService")
     public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) {
-        return systemService.finishService(clientId, serviceId);
+        return registrationService.finishService(clientId, serviceId);
     }
 }
