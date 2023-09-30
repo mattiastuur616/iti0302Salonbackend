@@ -39,6 +39,17 @@ public class SystemController {
     }
 
     /**
+     * Get request of one client.
+     *
+     * @param id of the client
+     * @return client dto
+     */
+    @GetMapping("/client/{id}")
+    public ClientDto getClient(@PathVariable Long id) {
+        return clientService.getClient(id);
+    }
+
+    /**
      * Get request for showing one client's data.
      *
      * @param email of the client

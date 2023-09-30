@@ -41,6 +41,18 @@ public class ClientService {
     }
 
     /**
+     * Method for getting one client.
+     *
+     * @param id of the client
+     * @return client dto
+     */
+    @Transactional
+    public ClientDto getClient(Long id) {
+        Optional<Client> existingClient = clientRepository.findById(id);
+        return existingClient.map(this::convertIntoClientDto).orElse(null);
+    }
+
+    /**
      * Method for receiving client's id.
      *
      * @param email of the client
