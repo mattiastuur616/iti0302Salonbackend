@@ -103,6 +103,17 @@ public class SystemController {
     }
 
     /**
+     * Put request for adding money to client's account.
+     *
+     * @param id of the client
+     * @param amount to be added
+     */
+    @PutMapping("/addMoney")
+    public void addMoney(@RequestParam Long id, @RequestParam Integer amount) {
+        clientService.addMoney(id, amount);
+    }
+
+    /**
      * Delete request for removing the client from the salon.
      *
      * @param id of the client to be removed
