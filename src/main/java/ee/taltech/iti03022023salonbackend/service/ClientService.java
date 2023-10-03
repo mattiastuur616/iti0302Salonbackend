@@ -23,7 +23,6 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final RegistrationRepository registrationRepository;
-    private final RegistrationService registrationService;
     private final ServiceOfServices serviceOfServices;
 
     /**
@@ -106,11 +105,11 @@ public class ClientService {
             return "1";
         } else if (existingUser.isPresent()) {
             return "2";
-        } else if (isValidPassword(password)) {
+        } else if (!isValidPassword(password)) {
             return "3";
-        } else if (isValidPhoneNumber(client.getPhoneNumber())) {
+        } else if (!isValidPhoneNumber(client.getPhoneNumber())) {
             return "4";
-        } else if (isValidIdCode(client.getIdCode())) {
+        } else if (!isValidIdCode(client.getIdCode())) {
             return "5";
         }
         client.setMoney(0);
@@ -151,11 +150,12 @@ public class ClientService {
      * @return boolean
      */
     public boolean isValidPhoneNumber(String number) {
-        String numerics = "1234567890";
+        // String numerics = "1234567890";
+        List<String> numerics = List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
         if (number.length() < 7) {
             return false;
         }
-        for (int i = 0; i < numerics.length(); i++) {
+        for (int i = 0; i < number.length(); i++) {
             if (!numerics.contains(number.substring(i, i + 1))) {
                 return false;
             }
@@ -192,8 +192,8 @@ public class ClientService {
      * @return boolean
      */
     public boolean isValidIdCode(String idCode) {
-        List<Integer> months1 = List.of(1, 3, 5, 7, 8, 10, 12);
-        List<Integer> months2 = List.of(4, 6, 9, 11);
+        // List<Integer> months1 = List.of(1, 3, 5, 7, 8, 10, 12);
+        // List<Integer> months2 = List.of(4, 6, 9, 11);
         int genderNumber = Integer.parseInt(idCode.substring(0, 1));
         int yearNumber = Integer.parseInt(idCode.substring(1, 3));
         int monthNumber = Integer.parseInt(idCode.substring(3, 5));
@@ -206,13 +206,7 @@ public class ClientService {
             return false;
         } else if (monthNumber < 1 || monthNumber > 12) {
             return false;
-        } else if (dayNumber > 31 || dayNumber < 1) {
-            return false;
-        } else if (dayNumber <= 31 && !months1.contains(monthNumber)) {
-            return false;
-        } else if (dayNumber <= 30 && !months2.contains(monthNumber)) {
-            return false;
-        } else return isControlNumberCorrect(idCode);
+        } else return dayNumber <= 31 && dayNumber >= 1;
     }
 
     /**
