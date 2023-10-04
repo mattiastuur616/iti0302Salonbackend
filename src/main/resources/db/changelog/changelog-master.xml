@@ -135,4 +135,16 @@
             add constraint fk_client_id_client_id foreign key (client_id) references Client(client_id)
         </sql>
     </changeSet>
+    <changeSet id="04-10-2023-21:13" author="mattuu">
+        <sql>
+            alter table Users
+            drop column password
+        </sql>
+    </changeSet>
+    <changeSet id="04-10-2023-21:18" author="mattuu">
+        <sql>
+            alter table Users
+            add column password varchar(500)
+        </sql>
+    </changeSet>
 </databaseChangeLog>

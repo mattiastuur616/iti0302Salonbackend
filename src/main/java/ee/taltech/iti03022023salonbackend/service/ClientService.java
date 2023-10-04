@@ -11,6 +11,8 @@ import ee.taltech.iti03022023salonbackend.repository.RegistrationRepository;
 import ee.taltech.iti03022023salonbackend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ public class ClientService {
     private final UserRepository userRepository;
     private final RegistrationRepository registrationRepository;
     private final ServiceOfServices serviceOfServices;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Method for showing all the clients existing in the database.
@@ -115,7 +120,7 @@ public class ClientService {
         client.setMoney(0);
         clientRepository.save(client);
         User newUser = new User();
-        newUser.setPassword(password);
+        newUser.setPassword(passwordEncoder.encode(password));
         newUser.setClientId(client.getClientId());
         userRepository.save(newUser);
         return "0";
@@ -182,7 +187,7 @@ public class ClientService {
             return false;
         }
         User user = existingUser.get();
-        return user.getPassword().equals(password);
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     /**
