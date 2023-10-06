@@ -18,9 +18,8 @@ public class AdminDto {
     private Date dateOfBirth;
     private String homeAddress;
 
-    public AdminDto(Long adminId, String firstName, String lastName, Integer money,
-                    String phoneNumber, String email, String idCode, Date dateOfBirth,
-                    String homeAddress) {
+    public AdminDto(Long adminId, String firstName, String lastName, String phoneNumber,
+                    String email, String idCode, Date dateOfBirth, String homeAddress) {
         this.adminId = adminId;
         this.firstName = firstName;
         this.lastName = lastName;

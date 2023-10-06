@@ -139,6 +139,7 @@ public class ClientService {
      * @param password of user
      * @return boolean
      */
+    @Transactional
     public boolean isValidClient(String email, String password) {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
         if (existingClient.isEmpty()) {

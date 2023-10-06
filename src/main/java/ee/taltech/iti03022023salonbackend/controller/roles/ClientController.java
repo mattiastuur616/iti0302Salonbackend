@@ -61,6 +61,7 @@ public class ClientController {
      * Post request for adding a new client to the salon.
      *
      * @param client to be added
+     * @param password of the client
      * @return the string explaining the result
      */
     @PostMapping("/addClient")
@@ -82,8 +83,8 @@ public class ClientController {
     /**
      * Get request for user to log in.
      *
-     * @param email email
-     * @param password password
+     * @param email of the user
+     * @param password of the user
      * @return boolean
      */
     @GetMapping("/isValidClient")

@@ -134,10 +134,11 @@ public class CosmeticService {
      * Method used when logging in.
      * It checks whether the user has put correct credentials.
      *
-     * @param email of user
-     * @param password of user
+     * @param email of the user
+     * @param password of the user
      * @return boolean
      */
+    @Transactional
     public boolean isValidCosmetic(String email, String password) {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findCosmeticsByEmailIgnoreCase(email);
         if (existingCosmetic.isEmpty()) {
