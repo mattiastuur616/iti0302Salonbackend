@@ -1,6 +1,6 @@
-package ee.taltech.iti03022023salonbackend.repository;
+package ee.taltech.iti03022023salonbackend.repository.service;
 
-import ee.taltech.iti03022023salonbackend.model.ServiceType;
+import ee.taltech.iti03022023salonbackend.model.service.ServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

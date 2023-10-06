@@ -1,4 +1,4 @@
-package ee.taltech.iti03022023salonbackend.dto;
+package ee.taltech.iti03022023salonbackend.dto.client;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,11 +1,11 @@
 package ee.taltech.iti03022023salonbackend.service;
 
-import ee.taltech.iti03022023salonbackend.dto.CosmeticDto;
+import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
-import ee.taltech.iti03022023salonbackend.model.Cosmetic;
-import ee.taltech.iti03022023salonbackend.model.SalonService;
-import ee.taltech.iti03022023salonbackend.repository.CosmeticRepository;
-import ee.taltech.iti03022023salonbackend.repository.SalonServiceRepository;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
+import ee.taltech.iti03022023salonbackend.model.service.SalonService;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
+import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -113,6 +113,7 @@ public class CosmeticService {
      */
     public CosmeticDto convertIntoCosmeticDto(Cosmetic cosmetic) {
         return new CosmeticDto(cosmetic.getCosmeticId(), cosmetic.getFirstName(), cosmetic.getLastName(),
-                cosmetic.getPhoneNumber(), cosmetic.getEmail());
+                cosmetic.getPhoneNumber(), cosmetic.getEmail(), cosmetic.getIdCode(),
+                cosmetic.getDateOfBirth(), cosmetic.getHomeAddress());
     }
 }

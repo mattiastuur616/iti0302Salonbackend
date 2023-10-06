@@ -147,4 +147,69 @@
             add column password varchar(500)
         </sql>
     </changeSet>
+    <changeSet id="05-10-2023-17:50" author="mattuu">
+        <sql>
+            alter table Users
+            alter column password set not null
+        </sql>
+    </changeSet>
+    <changeSet id="05-10-2023-17:51" author="mattuu">
+        <sql>
+            alter table Users
+            add unique (password)
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-16:23" author="mattuu">
+        <sql>
+            alter table Cosmetic
+            add column id_code varchar(11) unique not null
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-16:26" author="mattuu">
+        <sql>
+            alter table Cosmetic
+            add column date_of_birth date not null
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-16:27" author="mattuu">
+        <sql>
+            alter table Cosmetic
+            add column home_address varchar(255) not null
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-16:34" author="mattuu">
+        <sql>
+            create table Cosmetic_users(
+                user_id serial,
+                cosmetic_id int,
+                password varchar(500) unique not null ,
+                constraint fk_cosmetic_id_cosmetic_id foreign key (cosmetic_id) references Cosmetic(cosmetic_id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-17:12" author="mattuu">
+        <sql>
+            create table Admin(
+                admin_id serial,
+                first_name varchar(255) not null ,
+                last_name varchar(255) not null ,
+                phone_number varchar(14) unique ,
+                email varchar(255) unique not null ,
+                id_code varchar(11) unique not null ,
+                date_of_birth date not null ,
+                home_address varchar(255) not null ,
+                constraint pk_admin_id primary key (admin_id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="06-10-2023-17:20" author="mattuu">
+        <sql>
+            create table Admin_users(
+                user_id serial,
+                admin_id int,
+                password varchar(500) unique not null ,
+                constraint fk_admin_id_admin_id foreign key (admin_id) references Admin(admin_id)
+            )
+        </sql>
+    </changeSet>
 </databaseChangeLog>

@@ -1,4 +1,4 @@
-package ee.taltech.iti03022023salonbackend.model;
+package ee.taltech.iti03022023salonbackend.model.client;
 
 import jakarta.persistence.*;
 import lombok.Getter;

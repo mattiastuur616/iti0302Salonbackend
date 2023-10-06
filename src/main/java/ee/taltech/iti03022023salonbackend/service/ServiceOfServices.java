@@ -1,12 +1,12 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
-import ee.taltech.iti03022023salonbackend.model.Cosmetic;
-import ee.taltech.iti03022023salonbackend.model.SalonService;
-import ee.taltech.iti03022023salonbackend.model.ServiceType;
-import ee.taltech.iti03022023salonbackend.repository.CosmeticRepository;
-import ee.taltech.iti03022023salonbackend.repository.SalonServiceRepository;
-import ee.taltech.iti03022023salonbackend.repository.ServiceTypeRepository;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
+import ee.taltech.iti03022023salonbackend.model.service.SalonService;
+import ee.taltech.iti03022023salonbackend.model.service.ServiceType;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
+import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
+import ee.taltech.iti03022023salonbackend.repository.service.ServiceTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

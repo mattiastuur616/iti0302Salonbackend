@@ -1,7 +1,7 @@
-package ee.taltech.iti03022023salonbackend.repository;
+package ee.taltech.iti03022023salonbackend.repository.service;
 
-import ee.taltech.iti03022023salonbackend.model.Cosmetic;
-import ee.taltech.iti03022023salonbackend.model.SalonService;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
+import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;

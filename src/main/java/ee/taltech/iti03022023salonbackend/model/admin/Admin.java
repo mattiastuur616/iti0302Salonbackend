@@ -1,20 +1,20 @@
-package ee.taltech.iti03022023salonbackend.model;
+package ee.taltech.iti03022023salonbackend.model.admin;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.sql.Date;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cosmetic")
-public class Cosmetic {
+@Table(name = "admin")
+public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cosmetic_id")
-    private Long cosmeticId;
+    @Column(name = "admin_id")
+    private Long adminId;
 
     @Column(name = "first_name")
     private String firstName;
@@ -28,6 +28,12 @@ public class Cosmetic {
     @Column(name = "email")
     private String email;
 
-    @OneToMany
-    private List<SalonService> serviceList;
+    @Column(name = "id_code")
+    private String idCode;
+
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
+
+    @Column(name = "home_address")
+    private String homeAddress;
 }

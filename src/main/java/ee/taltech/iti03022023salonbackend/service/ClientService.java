@@ -1,14 +1,14 @@
 package ee.taltech.iti03022023salonbackend.service;
 
-import ee.taltech.iti03022023salonbackend.dto.ClientDto;
+import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
-import ee.taltech.iti03022023salonbackend.dto.UserDto;
-import ee.taltech.iti03022023salonbackend.model.Client;
+import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.model.client.Client;
+import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
 import ee.taltech.iti03022023salonbackend.model.Registration;
-import ee.taltech.iti03022023salonbackend.model.User;
-import ee.taltech.iti03022023salonbackend.repository.ClientRepository;
+import ee.taltech.iti03022023salonbackend.repository.client.ClientRepository;
 import ee.taltech.iti03022023salonbackend.repository.RegistrationRepository;
-import ee.taltech.iti03022023salonbackend.repository.UserRepository;
+import ee.taltech.iti03022023salonbackend.repository.client.ClientUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class ClientService {
     private final ClientRepository clientRepository;
-    private final UserRepository userRepository;
+    private final ClientUserRepository clientUserRepository;
     private final RegistrationRepository registrationRepository;
     private final ServiceOfServices serviceOfServices;
 
@@ -78,12 +78,12 @@ public class ClientService {
      * @return the list of users
      */
     @Transactional
-    public List<UserDto> getAllUsers() {
-        List<UserDto> userDtoList = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
-            userDtoList.add(convertIntoUserDto(user));
+    public List<ClientUserDto> getAllUsers() {
+        List<ClientUserDto> clientUserDtoList = new ArrayList<>();
+        for (ClientUser clientUser : clientUserRepository.findAll()) {
+            clientUserDtoList.add(convertIntoUserDto(clientUser));
         }
-        return userDtoList;
+        return clientUserDtoList;
     }
 
     /**
@@ -105,7 +105,7 @@ public class ClientService {
     @Transactional
     public String addClient(Client client, String password) {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(client.getEmail());
-        Optional<User> existingUser = userRepository.findUsersByPasswordIgnoreCase(password);
+        Optional<ClientUser> existingUser = clientUserRepository.findUsersByPassword(password);
         if (existingClient.isPresent()) {
             return "1";
         } else if (existingUser.isPresent()) {
@@ -119,10 +119,10 @@ public class ClientService {
         }
         client.setMoney(0);
         clientRepository.save(client);
-        User newUser = new User();
-        newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setClientId(client.getClientId());
-        userRepository.save(newUser);
+        ClientUser newClientUser = new ClientUser();
+        newClientUser.setPassword(passwordEncoder.encode(password));
+        newClientUser.setClient(client);
+        clientUserRepository.save(newClientUser);
         return "0";
     }
 
@@ -182,12 +182,12 @@ public class ClientService {
             return false;
         }
         Client client = existingClient.get();
-        Optional<User> existingUser = userRepository.findUsersByClientId(client.getClientId());
+        Optional<ClientUser> existingUser = clientUserRepository.findUsersByClient(client);
         if (existingUser.isEmpty()) {
             return false;
         }
-        User user = existingUser.get();
-        return passwordEncoder.matches(password, user.getPassword());
+        ClientUser clientUser = existingUser.get();
+        return passwordEncoder.matches(password, clientUser.getPassword());
     }
 
     /**
@@ -273,12 +273,12 @@ public class ClientService {
             return "No such client in the database.";
         }
         Client client = existingClient.get();
-        Optional<User> existingUser = userRepository.findUsersByClientId(client.getClientId());
+        Optional<ClientUser> existingUser = clientUserRepository.findUsersByClient(client);
         if (existingUser.isEmpty()) {
             return "Error";
         }
-        User user = existingUser.get();
-        userRepository.delete(user);
+        ClientUser clientUser = existingUser.get();
+        clientUserRepository.delete(clientUser);
         clientRepository.delete(client);
         return "Client " + client.getFirstName() + " " + client.getLastName() + " was removed from the database.";
     }
@@ -335,10 +335,10 @@ public class ClientService {
     /**
      * Help function to convert original user object into the data transfer object.
      *
-     * @param user to be converted
+     * @param clientUser to be converted
      * @return dto of the original user object
      */
-    public UserDto convertIntoUserDto(User user) {
-        return new UserDto(user.getUserId(), user.getClientId(), user.getPassword());
+    public ClientUserDto convertIntoUserDto(ClientUser clientUser) {
+        return new ClientUserDto(clientUser.getUserId(), clientUser.getClient().getClientId(), clientUser.getPassword());
     }
 }

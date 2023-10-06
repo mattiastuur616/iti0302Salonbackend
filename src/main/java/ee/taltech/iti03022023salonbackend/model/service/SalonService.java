@@ -1,11 +1,11 @@
-package ee.taltech.iti03022023salonbackend.model;
+package ee.taltech.iti03022023salonbackend.model.service;
 
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.util.List;
 
 @Getter
 @Setter

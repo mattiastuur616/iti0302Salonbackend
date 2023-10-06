@@ -1,12 +1,12 @@
 package ee.taltech.iti03022023salonbackend.controller;
 
-import ee.taltech.iti03022023salonbackend.dto.ClientDto;
-import ee.taltech.iti03022023salonbackend.dto.CosmeticDto;
+import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
+import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
-import ee.taltech.iti03022023salonbackend.dto.UserDto;
-import ee.taltech.iti03022023salonbackend.model.Client;
-import ee.taltech.iti03022023salonbackend.model.Cosmetic;
-import ee.taltech.iti03022023salonbackend.model.SalonService;
+import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.model.client.Client;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
+import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import ee.taltech.iti03022023salonbackend.service.ClientService;
 import ee.taltech.iti03022023salonbackend.service.CosmeticService;
 import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
@@ -66,7 +66,7 @@ public class SystemController {
      * @return the list of users
      */
     @GetMapping("/allUsers")
-    public List<UserDto> getAllUsers() {return clientService.getAllUsers();}
+    public List<ClientUserDto> getAllUsers() {return clientService.getAllUsers();}
 
     /**
      * Post request for adding a new client to the salon.
