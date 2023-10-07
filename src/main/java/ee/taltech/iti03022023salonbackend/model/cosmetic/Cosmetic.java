@@ -38,7 +38,4 @@ public class Cosmetic {
 
     @Column(name = "home_address")
     private String homeAddress;
-
-    @OneToMany
-    private List<SalonService> serviceList;
 }

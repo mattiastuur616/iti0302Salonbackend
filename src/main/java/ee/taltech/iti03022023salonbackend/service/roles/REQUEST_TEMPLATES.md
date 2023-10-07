@@ -38,6 +38,9 @@ Example JSON file, which will add a new cosmetic to the database:
 - {
   "firstName": "Carmen",
   "lastName": "Karjane",
-  "phoneNumber": "1445 6789",
-  "email": "carmen.karjane@gmail.com"
+  "phoneNumber": "14456789",
+  "email": "carmen.karjane@gmail.com",
+  "idCode": "50102159482",
+  "dateOfBirth": "2001-02-15",
+  "homeAddress": "Paju tee 54"
   }

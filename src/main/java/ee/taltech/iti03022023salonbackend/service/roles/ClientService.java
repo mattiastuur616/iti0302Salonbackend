@@ -110,10 +110,9 @@ public class ClientService {
     @Transactional
     public String addClient(Client client, String password) {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(client.getEmail());
-        Optional<ClientUser> existingUser = clientUserRepository.findUsersByPassword(password);
         if (existingClient.isPresent()) {
             return "1";
-        } else if (existingUser.isPresent()) {
+        } else if (passwordExists(password)) {
             return "2";
         } else if (!validityCheck.isValidPassword(password)) {
             return "3";
@@ -129,6 +128,25 @@ public class ClientService {
         newClientUser.setClient(client);
         clientUserRepository.save(newClientUser);
         return "0";
+    }
+
+    /**
+     * Function to check if entered password doesn't already exist.
+     *
+     * @param password entered by the new user
+     * @return boolean
+     */
+    public boolean passwordExists(String password) {
+        List<String> passwords = new ArrayList<>();
+        for (ClientUser clientUser : clientUserRepository.findAll()) {
+            passwords.add(clientUser.getPassword());
+        }
+        for (String pass : passwords) {
+            if (passwordEncoder.matches(password, pass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

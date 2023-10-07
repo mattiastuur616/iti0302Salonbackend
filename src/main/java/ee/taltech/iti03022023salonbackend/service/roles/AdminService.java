@@ -25,8 +25,6 @@ public class AdminService {
     private final ValidityCheck validityCheck;
     private final AdminRepository adminRepository;
     private final AdminUserRepository adminUserRepository;
-    private final RegistrationRepository registrationRepository;
-    private final ServiceOfServices serviceOfServices;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -108,10 +106,9 @@ public class AdminService {
     @Transactional
     public String addAdmin(Admin admin, String password) {
         Optional<Admin> existingAdmin = adminRepository.findAdminsByEmailIgnoreCase(admin.getEmail());
-        Optional<AdminUser> existingUser = adminUserRepository.findAdminUsersByPassword(password);
         if (existingAdmin.isPresent()) {
             return "1";
-        } else if (existingUser.isPresent()) {
+        } else if (passwordExists(password)) {
             return "2";
         } else if (!validityCheck.isValidPassword(password)) {
             return "3";
@@ -126,6 +123,25 @@ public class AdminService {
         newAdminUser.setAdmin(admin);
         adminUserRepository.save(newAdminUser);
         return "0";
+    }
+
+    /**
+     * Function to check if entered password doesn't already exist.
+     *
+     * @param password entered by the new user
+     * @return boolean
+     */
+    public boolean passwordExists(String password) {
+        List<String> passwords = new ArrayList<>();
+        for (AdminUser adminUser : adminUserRepository.findAll()) {
+            passwords.add(adminUser.getPassword());
+        }
+        for (String pass : passwords) {
+            if (passwordEncoder.matches(password, pass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

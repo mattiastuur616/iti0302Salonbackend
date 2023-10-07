@@ -110,10 +110,9 @@ public class CosmeticService {
     @Transactional
     public String addCosmetic(Cosmetic cosmetic, String password) {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findCosmeticsByEmailIgnoreCase(cosmetic.getEmail());
-        Optional<CosmeticUser> existingUser = cosmeticUserRepository.findCosmeticUsersByPassword(password);
         if (existingCosmetic.isPresent()) {
             return "1";
-        } else if (existingUser.isPresent()) {
+        } else if (passwordExists(password)) {
             return "2";
         } else if (!validityCheck.isValidPassword(password)) {
             return "3";
@@ -128,6 +127,25 @@ public class CosmeticService {
         newCosmeticUser.setCosmetic(cosmetic);
         cosmeticUserRepository.save(newCosmeticUser);
         return "0";
+    }
+
+    /**
+     * Function to check if entered password doesn't already exist.
+     *
+     * @param password entered by the new user
+     * @return boolean
+     */
+    public boolean passwordExists(String password) {
+        List<String> passwords = new ArrayList<>();
+        for (CosmeticUser user : cosmeticUserRepository.findAll()) {
+            passwords.add(user.getPassword());
+        }
+        for (String pass : passwords) {
+            if (passwordEncoder.matches(password, pass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
