@@ -4,12 +4,16 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
 import ee.taltech.iti03022023salonbackend.model.Registration;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.CosmeticUser;
+import ee.taltech.iti03022023salonbackend.repository.admin.AdminUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientRepository;
 import ee.taltech.iti03022023salonbackend.repository.RegistrationRepository;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientUserRepository;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,8 @@ public class ClientService {
     private final ValidityCheck validityCheck;
     private final ClientRepository clientRepository;
     private final ClientUserRepository clientUserRepository;
+    private final CosmeticUserRepository cosmeticUserRepository;
+    private final AdminUserRepository adminUserRepository;
     private final RegistrationRepository registrationRepository;
     private final ServiceOfServices serviceOfServices;
 
@@ -138,8 +144,14 @@ public class ClientService {
      */
     public boolean passwordExists(String password) {
         List<String> passwords = new ArrayList<>();
+        for (CosmeticUser user : cosmeticUserRepository.findAll()) {
+            passwords.add(user.getPassword());
+        }
         for (ClientUser clientUser : clientUserRepository.findAll()) {
             passwords.add(clientUser.getPassword());
+        }
+        for (AdminUser adminUser : adminUserRepository.findAll()) {
+            passwords.add(adminUser.getPassword());
         }
         for (String pass : passwords) {
             if (passwordEncoder.matches(password, pass)) {

@@ -5,10 +5,12 @@ import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
 import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
-import ee.taltech.iti03022023salonbackend.repository.RegistrationRepository;
+import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.CosmeticUser;
 import ee.taltech.iti03022023salonbackend.repository.admin.AdminRepository;
 import ee.taltech.iti03022023salonbackend.repository.admin.AdminUserRepository;
-import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
+import ee.taltech.iti03022023salonbackend.repository.client.ClientUserRepository;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class AdminService {
     private final ValidityCheck validityCheck;
     private final AdminRepository adminRepository;
     private final AdminUserRepository adminUserRepository;
+    private final ClientUserRepository clientUserRepository;
+    private final CosmeticUserRepository cosmeticUserRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -133,6 +137,12 @@ public class AdminService {
      */
     public boolean passwordExists(String password) {
         List<String> passwords = new ArrayList<>();
+        for (CosmeticUser user : cosmeticUserRepository.findAll()) {
+            passwords.add(user.getPassword());
+        }
+        for (ClientUser clientUser : clientUserRepository.findAll()) {
+            passwords.add(clientUser.getPassword());
+        }
         for (AdminUser adminUser : adminUserRepository.findAll()) {
             passwords.add(adminUser.getPassword());
         }

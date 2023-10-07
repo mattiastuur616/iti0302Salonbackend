@@ -4,9 +4,13 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
+import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
+import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.CosmeticUser;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
+import ee.taltech.iti03022023salonbackend.repository.admin.AdminUserRepository;
+import ee.taltech.iti03022023salonbackend.repository.client.ClientUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
 import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
@@ -27,6 +31,8 @@ public class CosmeticService {
     private final ValidityCheck validityCheck;
     private final CosmeticRepository cosmeticRepository;
     private final CosmeticUserRepository cosmeticUserRepository;
+    private final ClientUserRepository clientUserRepository;
+    private final AdminUserRepository adminUserRepository;
     private final SalonServiceRepository salonServiceRepository;
     private final ServiceOfServices serviceOfServices;
 
@@ -139,6 +145,12 @@ public class CosmeticService {
         List<String> passwords = new ArrayList<>();
         for (CosmeticUser user : cosmeticUserRepository.findAll()) {
             passwords.add(user.getPassword());
+        }
+        for (ClientUser clientUser : clientUserRepository.findAll()) {
+            passwords.add(clientUser.getPassword());
+        }
+        for (AdminUser adminUser : adminUserRepository.findAll()) {
+            passwords.add(adminUser.getPassword());
         }
         for (String pass : passwords) {
             if (passwordEncoder.matches(password, pass)) {
