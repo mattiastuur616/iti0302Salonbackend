@@ -114,4 +114,37 @@ public class CosmeticController {
     public List<SalonServiceDto> getAllServicesOfCosmetic(@PathVariable Long id) {
         return cosmeticService.getAllServicesOfCosmetic(id);
     }
+
+    /**
+     * Get request for available services.
+     *
+     * @param id of the cosmetic
+     * @return the list of services
+     */
+    @GetMapping("/openTasks/{id}")
+    public List<SalonServiceDto> getOpenServices(@PathVariable Long id) {
+        return cosmeticService.getOpenServices(id);
+    }
+
+    /**
+     * Get request for registered services.
+     *
+     * @param id of the cosmetic
+     * @return the list of services
+     */
+    @GetMapping("/busyTasks/{id}")
+    public List<SalonServiceDto> getRegisteredServices(@PathVariable Long id) {
+        return cosmeticService.getRegisteredServices(id);
+    }
+
+    /**
+     * Get request for finished services.
+     *
+     * @param id of the cosmetic
+     * @return the list of services
+     */
+    @GetMapping("/endedTasks/{id}")
+    public List<SalonServiceDto> getFinishedServices(@PathVariable Long id) {
+        return cosmeticService.getFinishedServices(id);
+    }
 }

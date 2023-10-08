@@ -53,8 +53,8 @@ public class SalonServiceController {
      * @return the string explaining the result
      */
     @PostMapping("/addService")
-    public String addSalonService(@RequestBody SalonService salonService) {
-        return serviceOfServices.addSalonService(salonService);
+    public String addSalonService(@RequestBody SalonService salonService, @RequestParam Long cosmeticId) {
+        return serviceOfServices.addSalonService(salonService, cosmeticId);
     }
 
     /**

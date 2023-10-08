@@ -244,6 +244,57 @@ public class CosmeticService {
     }
 
     /**
+     * Method for showing all cosmetic's services which are open for register.
+     *
+     * @param id of the cosmetic
+     * @return the list of service dto-s
+     */
+    @Transactional
+    public List<SalonServiceDto> getOpenServices(Long id) {
+        List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
+        for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
+            if (salonServiceDto.getStatusId() == 1) {
+                salonServiceDtoList.add(salonServiceDto);
+            }
+        }
+        return salonServiceDtoList;
+    }
+
+    /**
+     * Method for showing all cosmetic's services which are registered by clients.
+     *
+     * @param id of the cosmetic
+     * @return the list of service dto-s
+     */
+    @Transactional
+    public List<SalonServiceDto> getRegisteredServices(Long id) {
+        List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
+        for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
+            if (salonServiceDto.getStatusId() == 2) {
+                salonServiceDtoList.add(salonServiceDto);
+            }
+        }
+        return salonServiceDtoList;
+    }
+
+    /**
+     * Method for showing all cosmetic's services which are open for registration.
+     *
+     * @param id of the cosmetic
+     * @return the list of service dto-s
+     */
+    @Transactional
+    public List<SalonServiceDto> getFinishedServices(Long id) {
+        List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
+        for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
+            if (salonServiceDto.getStatusId() == 3) {
+                salonServiceDtoList.add(salonServiceDto);
+            }
+        }
+        return salonServiceDtoList;
+    }
+
+    /**
      * Help function to convert the original object into the data transfer object.
      *
      * @param cosmetic to be converted

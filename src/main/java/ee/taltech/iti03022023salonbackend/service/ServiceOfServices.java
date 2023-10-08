@@ -3,9 +3,11 @@ package ee.taltech.iti03022023salonbackend.service;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
+import ee.taltech.iti03022023salonbackend.model.service.ServiceStatus;
 import ee.taltech.iti03022023salonbackend.model.service.ServiceType;
 import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
+import ee.taltech.iti03022023salonbackend.repository.service.ServiceStatusRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.ServiceTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class ServiceOfServices {
     private final CosmeticRepository cosmeticRepository;
     private final SalonServiceRepository salonServiceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+    private final ServiceStatusRepository serviceStatusRepository;
 
     /**
      * Method for showing all the services existing in the database.
@@ -71,12 +74,13 @@ public class ServiceOfServices {
      * @return the string explaining the result
      */
     @Transactional
-    public String addSalonService(SalonService salonService) {
+    public String addSalonService(SalonService salonService, Long cosmeticId) {
         Optional<SalonService> existingSalonService = salonServiceRepository
                 .getSalonServicesByCosmeticAndAndStartingTime(salonService.getCosmetic(), salonService.getStartingTime());
         Optional<ServiceType> existingServiceType = serviceTypeRepository
-                .findById(salonService.getServiceType().getTypeId());
-        Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(salonService.getCosmetic().getCosmeticId());
+                .findById(Long.parseLong("1"));
+        Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(cosmeticId);
+        Optional<ServiceStatus> existingStatus = serviceStatusRepository.findById(Long.parseLong("1"));
         if (existingSalonService.isPresent()) {
             return "Service is already in the database.";
         } else if (existingServiceType.isEmpty()) {
@@ -85,9 +89,14 @@ public class ServiceOfServices {
             return "Can't add the service because there's no such cosmetic in the salon.";
         } else if (salonService.getServiceStatus().getStatusId() != 1) {
             return "Can't add the service because its status isn't available but should.";
+        } else if (existingStatus.isEmpty()) {
+            return "No such status.";
         }
+        salonService.setCosmetic(existingCosmetic.get());
+        salonService.setServiceType(existingServiceType.get());
+        salonService.setServiceStatus(existingStatus.get());
         salonServiceRepository.save(salonService);
-        return "New service has added to the database.";
+        return "New service has added to the salon.";
     }
 
     /**
