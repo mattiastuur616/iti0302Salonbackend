@@ -221,7 +221,7 @@ public class ClientService {
         ClientUser clientUser = existingUser.get();
         clientUserRepository.delete(clientUser);
         clientRepository.delete(client);
-        return "Client " + client.getFirstName() + " " + client.getLastName() + " was removed from the database.";
+        return "Client " + client.getFirstName() + " " + client.getLastName() + " was removed from the salon.";
     }
 
     /**
