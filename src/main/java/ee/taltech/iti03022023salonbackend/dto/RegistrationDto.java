@@ -10,15 +10,22 @@ import java.sql.Date;
 public class RegistrationDto {
 
     private Long registrationId;
-    private Long serviceId;
-    private Long clientId;
+    private String serviceName;
+    private Integer servicePrice;
+    private Date startingTime;
+    private String clientName;
+    private String cosmeticName;
     private Date registrationDate;
 
-    public RegistrationDto(Long registrationId, Long serviceId,
-                           Long clientId, Date registrationDate) {
+    public RegistrationDto(Long registrationId, String serviceName, Integer servicePrice,
+                           Date startingTime, String clientName, String cosmeticName,
+                           Date registrationDate) {
         this.registrationId = registrationId;
-        this.serviceId = serviceId;
-        this.clientId = clientId;
+        this.serviceName = serviceName;
+        this.servicePrice = servicePrice;
+        this.startingTime = startingTime;
+        this.clientName = clientName;
+        this.cosmeticName = cosmeticName;
         this.registrationDate = registrationDate;
     }
 }

@@ -3,10 +3,13 @@ package ee.taltech.iti03022023salonbackend.service;
 import ee.taltech.iti03022023salonbackend.dto.*;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
+import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import ee.taltech.iti03022023salonbackend.model.service.ServiceStatus;
 import ee.taltech.iti03022023salonbackend.repository.*;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientRepository;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.ServiceStatusRepository;
 import jakarta.transaction.Transactional;
@@ -26,9 +29,8 @@ public class RegistrationService {
     private final RegistrationRepository registrationRepository;
     private final SalonServiceRepository salonServiceRepository;
     private final ServiceStatusRepository serviceStatusRepository;
+    private final CosmeticRepository cosmeticRepository;
 
-
-    // Functions with the registrations.
 
     /**
      * Method for showing all the registrations in the database.
@@ -174,7 +176,24 @@ public class RegistrationService {
      * @return dto of the original registration object
      */
     public RegistrationDto convertIntoRegistrationDto(Registration registration) {
-        return new RegistrationDto(registration.getRegistrationId(), registration.getSalonService().getServiceId(),
-                registration.getClient().getClientId(), registration.getRegistrationDate());
+        Optional<SalonService> salonServiceOptional = salonServiceRepository.findById(registration.getSalonService().getServiceId());
+        Optional<Client> clientOptional = clientRepository.findById(registration.getClient().getClientId());
+        if (salonServiceOptional.isEmpty()) {
+            return null;
+        }
+        if (clientOptional.isEmpty()) {
+            return null;
+        }
+        SalonService salonService = salonServiceOptional.get();
+        Optional<Cosmetic> cosmeticOptional = cosmeticRepository.findById(salonService.getCosmetic().getCosmeticId());
+        if (cosmeticOptional.isEmpty()) {
+            return null;
+        }
+        Cosmetic cosmetic = cosmeticOptional.get();
+        Client client = clientOptional.get();
+        String cosmeticName = cosmetic.getFirstName() + " " + cosmetic.getLastName();
+        String clientName = client.getFirstName() + " " + client.getLastName();
+        return new RegistrationDto(registration.getRegistrationId(), salonService.getName(), salonService.getPrice(),
+                salonService.getStartingTime(), clientName, cosmeticName, registration.getRegistrationDate());
     }
 }

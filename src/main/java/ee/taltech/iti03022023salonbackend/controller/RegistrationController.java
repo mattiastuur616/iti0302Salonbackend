@@ -1,8 +1,11 @@
 package ee.taltech.iti03022023salonbackend.controller;
 
+import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
 import ee.taltech.iti03022023salonbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -10,6 +13,16 @@ import org.springframework.web.bind.annotation.*;
 public class RegistrationController {
     private final RegistrationService registrationService;
 
+
+    /**
+     * Get request for showing all registrations.
+     *
+     * @return the list of registrations
+     */
+    @GetMapping("/allRegistrations")
+    public List<RegistrationDto> getAllRegistrations() {
+        return registrationService.getAllRegistrations();
+    }
 
     /**
      * Post request for registering a service for the client.
