@@ -9,7 +9,6 @@ import ee.taltech.iti03022023salonbackend.model.service.ServiceStatus;
 import ee.taltech.iti03022023salonbackend.repository.*;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientRepository;
 import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
-import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.ServiceStatusRepository;
 import jakarta.transaction.Transactional;
@@ -170,6 +169,52 @@ public class RegistrationService {
     }
 
     /**
+     * Method for removing both the registration and a service itself.
+     *
+     * @param clientId of the client
+     * @param serviceId of the service
+     * @return string
+     */
+    @Transactional
+    public String removeServiceAndRegistration(Long clientId, Long serviceId) {
+        Optional<Client> existingClient = clientRepository.findById(clientId);
+        Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
+        if (existingClient.isEmpty()) {
+            return "No such client in the database.";
+        } else if (existingSalonService.isEmpty()) {
+            return "No such service in the database.";
+        }
+        Client client = existingClient.get();
+        SalonService salonService = existingSalonService.get();
+        Optional<Registration> existingRegistration = registrationRepository
+                .findAllByClientAndSalonService(client, salonService);
+        if (existingRegistration.isEmpty()) {
+            return "Error: can't find the registration in the database.";
+        }
+        Registration registration = existingRegistration.get();
+        registrationRepository.delete(registration);
+        salonServiceRepository.delete(salonService);
+        return "The registration and the service were both removed.";
+    }
+
+    /**
+     * Method for finding client's id by service id.
+     *
+     * @param serviceId of the service
+     * @return client's id
+     */
+    @Transactional
+    public Long getClientOfRegisteredService(Long serviceId) {
+        Optional<SalonService> existingService = salonServiceRepository.findById(serviceId);
+        if (existingService.isEmpty()) {
+            return null;
+        }
+        SalonService service = existingService.get();
+        Optional<Registration> existingRegistration = registrationRepository.findAllBySalonService(service);
+        return existingRegistration.map(registration -> registration.getClient().getClientId()).orElse(null);
+    }
+
+    /**
      * Help function to convert the original registration object into the data transfer object.
      *
      * @param registration to be converted
@@ -193,7 +238,7 @@ public class RegistrationService {
         Client client = clientOptional.get();
         String cosmeticName = cosmetic.getFirstName() + " " + cosmetic.getLastName();
         String clientName = client.getFirstName() + " " + client.getLastName();
-        return new RegistrationDto(registration.getRegistrationId(), salonService.getName(), salonService.getPrice(),
+        return new RegistrationDto(registration.getRegistrationId(), salonService.getServiceName(), salonService.getPrice(),
                 salonService.getStartingTime(), clientName, cosmeticName, registration.getRegistrationDate());
     }
 }

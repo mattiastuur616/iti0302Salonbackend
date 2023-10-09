@@ -18,7 +18,7 @@ public class SalonService {
     private Long serviceId;
 
     @Column(name = "name")
-    private String name;
+    private String serviceName;
 
     @Column(name = "price")
     private Integer price;

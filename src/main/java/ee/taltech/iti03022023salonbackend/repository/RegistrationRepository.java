@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
     Optional<Registration> findAllByClientAndSalonService(Client client, SalonService service);
+    Optional<Registration> findAllBySalonService(SalonService service);
 }

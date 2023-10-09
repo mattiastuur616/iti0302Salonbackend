@@ -59,4 +59,27 @@ public class RegistrationController {
     public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) {
         return registrationService.finishService(clientId, serviceId);
     }
+
+    /**
+     * Post request for removing both registration and a service.
+     *
+     * @param clientId of the client
+     * @param serviceId of the service
+     * @return string
+     */
+    @PostMapping("/removeRegistration")
+    public String removeServiceAndRegistration(@RequestParam Long clientId, @RequestParam Long serviceId) {
+        return registrationService.removeServiceAndRegistration(clientId, serviceId);
+    }
+
+    /**
+     * Get request for client id who has registered the service.
+     *
+     * @param serviceId of the service
+     * @return client's id
+     */
+    @GetMapping("/registeredClient/{serviceId}")
+    public Long getClientOfRegisteredService(@PathVariable Long serviceId) {
+        return registrationService.getClientOfRegisteredService(serviceId);
+    }
 }

@@ -87,14 +87,15 @@ public class ServiceOfServices {
             return "Can't add the service because there's no such service type in the salon.";
         } else if (existingCosmetic.isEmpty()) {
             return "Can't add the service because there's no such cosmetic in the salon.";
-        } else if (salonService.getServiceStatus().getStatusId() != 1) {
-            return "Can't add the service because its status isn't available but should.";
         } else if (existingStatus.isEmpty()) {
             return "No such status.";
         }
         salonService.setCosmetic(existingCosmetic.get());
         salonService.setServiceType(existingServiceType.get());
         salonService.setServiceStatus(existingStatus.get());
+        if (salonService.getServiceStatus().getStatusId() != 1) {
+            return "Can't add the service because its status isn't available but should.";
+        }
         salonServiceRepository.save(salonService);
         return "New service has added to the salon.";
     }
@@ -126,7 +127,7 @@ public class ServiceOfServices {
      * @return dto of the original salon service object
      */
     public SalonServiceDto convertIntoSalonServiceDto(SalonService salonService) {
-        return new SalonServiceDto(salonService.getServiceId(), salonService.getName(), salonService.getPrice(),
+        return new SalonServiceDto(salonService.getServiceId(), salonService.getServiceName(), salonService.getPrice(),
                 salonService.getServiceType().getTypeId(), salonService.getDuration(), salonService.getStartingTime(),
                 salonService.getServiceStatus().getStatusId(), salonService.getCosmetic().getCosmeticId());
     }
