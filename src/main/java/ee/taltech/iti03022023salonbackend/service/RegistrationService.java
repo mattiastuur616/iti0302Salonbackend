@@ -148,7 +148,7 @@ public class RegistrationService {
         Client client = existingClient.get();
         SalonService salonService = existingSalonService.get();
         if (salonService.getServiceStatus().getStatusId() != 2) {
-            return "Service can't be finished because the service is either not registered or already finished.";
+            return "Service has already happened so the cosmetic will remove it.";
         }
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() + 1);

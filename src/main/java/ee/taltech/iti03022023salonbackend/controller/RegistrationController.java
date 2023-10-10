@@ -67,7 +67,7 @@ public class RegistrationController {
      * @param serviceId of the service
      * @return string
      */
-    @PostMapping("/removeRegistration")
+    @DeleteMapping("/removeRegistration")
     public String removeServiceAndRegistration(@RequestParam Long clientId, @RequestParam Long serviceId) {
         return registrationService.removeServiceAndRegistration(clientId, serviceId);
     }
