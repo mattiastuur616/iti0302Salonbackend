@@ -95,9 +95,17 @@ public class ServiceOfServices {
         salonService.setServiceStatus(existingStatus.get());
         if (salonService.getServiceStatus().getStatusId() != 1) {
             return "Can't add the service because its status isn't available but should.";
+        } else if (salonService.getServiceName().isEmpty()) {
+            return "1";
+        } else if (salonService.getPrice() == null) {
+            return "2";
+        } else if (salonService.getDuration() == null) {
+            return "3";
+        } else if (salonService.getStartingTime() == null) {
+            return "4";
         }
         salonServiceRepository.save(salonService);
-        return "New service has added to the salon.";
+        return "0";
     }
 
     /**
