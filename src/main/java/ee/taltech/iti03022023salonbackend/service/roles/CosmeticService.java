@@ -4,6 +4,9 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
+import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
+import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticMapper;
+import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticUserMapper;
 import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
 import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
@@ -29,13 +32,24 @@ import java.util.Optional;
 @Service
 public class CosmeticService {
     private final ValidityCheck validityCheck;
+    @Autowired
     private final CosmeticRepository cosmeticRepository;
+    @Autowired
     private final CosmeticUserRepository cosmeticUserRepository;
+    @Autowired
     private final ClientUserRepository clientUserRepository;
+    @Autowired
     private final AdminUserRepository adminUserRepository;
+    @Autowired
     private final SalonServiceRepository salonServiceRepository;
+    @Autowired
     private final ServiceOfServices serviceOfServices;
-
+    @Autowired
+    private CosmeticMapper cosmeticMapper;
+    @Autowired
+    private CosmeticUserMapper cosmeticUserMapper;
+    @Autowired
+    private ServiceMapper serviceMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -48,7 +62,7 @@ public class CosmeticService {
     public List<CosmeticDto> getAllCosmetics() {
         List<CosmeticDto> cosmeticDtoList = new ArrayList<>();
         for (Cosmetic cosmetic : cosmeticRepository.findAll()) {
-            cosmeticDtoList.add(convertIntoCosmeticDto(cosmetic));
+            cosmeticDtoList.add(cosmeticMapper.cosmeticToCosmeticDto(cosmetic));
         }
         return cosmeticDtoList;
     }
@@ -61,8 +75,8 @@ public class CosmeticService {
      */
     @Transactional
     public CosmeticDto getCosmetic(Long id) {
-        Optional<Cosmetic> cosmetic = cosmeticRepository.findById(id);
-        return cosmetic.map(this::convertIntoCosmeticDto).orElse(null);
+        Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
+        return existingCosmetic.map(cosmetic -> cosmeticMapper.cosmeticToCosmeticDto(cosmetic)).orElse(null);
     }
 
     /**
@@ -90,7 +104,7 @@ public class CosmeticService {
     public List<CosmeticUserDto> getAllCosmeticUsers() {
         List<CosmeticUserDto> cosmeticUserDtoList = new ArrayList<>();
         for (CosmeticUser cosmeticUser : cosmeticUserRepository.findAll()) {
-            cosmeticUserDtoList.add(convertIntoCosmeticUserDto(cosmeticUser));
+            cosmeticUserDtoList.add(cosmeticUserMapper.cosmeticUserToCosmeticUserDto(cosmeticUser));
         }
         return cosmeticUserDtoList;
     }
@@ -238,7 +252,7 @@ public class CosmeticService {
             return null;
         }
         for (SalonService salonService : salonServiceRepository.findAllByCosmetic(existingCosmetic.get())) {
-            salonServiceDtoList.add(serviceOfServices.convertIntoSalonServiceDto(salonService));
+            salonServiceDtoList.add(serviceMapper.serviceToServiceDto(salonService));
         }
         return salonServiceDtoList;
     }
@@ -292,27 +306,5 @@ public class CosmeticService {
             }
         }
         return salonServiceDtoList;
-    }
-
-    /**
-     * Help function to convert the original object into the data transfer object.
-     *
-     * @param cosmetic to be converted
-     * @return dto of the original cosmetic object
-     */
-    public CosmeticDto convertIntoCosmeticDto(Cosmetic cosmetic) {
-        return new CosmeticDto(cosmetic.getCosmeticId(), cosmetic.getFirstName(), cosmetic.getLastName(),
-                cosmetic.getPhoneNumber(), cosmetic.getEmail(), cosmetic.getIdCode(),
-                cosmetic.getDateOfBirth(), cosmetic.getHomeAddress());
-    }
-
-    /**
-     * Help function to convert original cosmetic user object into the data transfer object.
-     *
-     * @param cosmeticUser to be converted
-     * @return dto of the original user object
-     */
-    public CosmeticUserDto convertIntoCosmeticUserDto(CosmeticUser cosmeticUser) {
-        return new CosmeticUserDto(cosmeticUser.getUserId(), cosmeticUser.getCosmetic().getCosmeticId(), cosmeticUser.getPassword());
     }
 }

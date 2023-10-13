@@ -13,19 +13,23 @@ public class RegistrationDto {
     private String serviceName;
     private Integer servicePrice;
     private Date startingTime;
-    private String clientName;
-    private String cosmeticName;
+    private String clientFirstName;
+    private String clientLastName;
+    private String cosmeticFirstName;
+    private String cosmeticLastName;
     private Date registrationDate;
 
     public RegistrationDto(Long registrationId, String serviceName, Integer servicePrice,
-                           Date startingTime, String clientName, String cosmeticName,
-                           Date registrationDate) {
+                           Date startingTime, String clientFirstName, String clientLastName,
+                           String cosmeticFirstName, String cosmeticLastName, Date registrationDate) {
         this.registrationId = registrationId;
         this.serviceName = serviceName;
         this.servicePrice = servicePrice;
         this.startingTime = startingTime;
-        this.clientName = clientName;
-        this.cosmeticName = cosmeticName;
+        this.clientFirstName = clientFirstName;
+        this.clientLastName = clientLastName;
+        this.cosmeticFirstName = cosmeticFirstName;
+        this.cosmeticLastName = cosmeticLastName;
         this.registrationDate = registrationDate;
     }
 }

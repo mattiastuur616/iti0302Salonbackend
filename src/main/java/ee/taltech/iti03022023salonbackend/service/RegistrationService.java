@@ -1,6 +1,7 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.*;
+import ee.taltech.iti03022023salonbackend.mapper.RegistrationMapper;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
@@ -13,6 +14,7 @@ import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceReposit
 import ee.taltech.iti03022023salonbackend.repository.service.ServiceStatusRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -24,11 +26,16 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Service
 public class RegistrationService {
+    @Autowired
     private final ClientRepository clientRepository;
+    @Autowired
     private final RegistrationRepository registrationRepository;
+    @Autowired
     private final SalonServiceRepository salonServiceRepository;
+    @Autowired
     private final ServiceStatusRepository serviceStatusRepository;
-    private final CosmeticRepository cosmeticRepository;
+    @Autowired
+    private RegistrationMapper registrationMapper;
 
 
     /**
@@ -40,7 +47,7 @@ public class RegistrationService {
     public List<RegistrationDto> getAllRegistrations() {
         List<RegistrationDto> registrationDtoList = new ArrayList<>();
         for (Registration registration : registrationRepository.findAll()) {
-            registrationDtoList.add(convertIntoRegistrationDto(registration));
+            registrationDtoList.add(registrationMapper.registrationToRegistrationDto(registration));
         }
         return registrationDtoList;
     }
@@ -212,33 +219,5 @@ public class RegistrationService {
         SalonService service = existingService.get();
         Optional<Registration> existingRegistration = registrationRepository.findAllBySalonService(service);
         return existingRegistration.map(registration -> registration.getClient().getClientId()).orElse(null);
-    }
-
-    /**
-     * Help function to convert the original registration object into the data transfer object.
-     *
-     * @param registration to be converted
-     * @return dto of the original registration object
-     */
-    public RegistrationDto convertIntoRegistrationDto(Registration registration) {
-        Optional<SalonService> salonServiceOptional = salonServiceRepository.findById(registration.getSalonService().getServiceId());
-        Optional<Client> clientOptional = clientRepository.findById(registration.getClient().getClientId());
-        if (salonServiceOptional.isEmpty()) {
-            return null;
-        }
-        if (clientOptional.isEmpty()) {
-            return null;
-        }
-        SalonService salonService = salonServiceOptional.get();
-        Optional<Cosmetic> cosmeticOptional = cosmeticRepository.findById(salonService.getCosmetic().getCosmeticId());
-        if (cosmeticOptional.isEmpty()) {
-            return null;
-        }
-        Cosmetic cosmetic = cosmeticOptional.get();
-        Client client = clientOptional.get();
-        String cosmeticName = cosmetic.getFirstName() + " " + cosmetic.getLastName();
-        String clientName = client.getFirstName() + " " + client.getLastName();
-        return new RegistrationDto(registration.getRegistrationId(), salonService.getServiceName(), salonService.getPrice(),
-                salonService.getStartingTime(), clientName, cosmeticName, registration.getRegistrationDate());
     }
 }

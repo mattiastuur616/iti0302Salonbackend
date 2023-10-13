@@ -3,6 +3,8 @@ package ee.taltech.iti03022023salonbackend.service.roles;
 import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
+import ee.taltech.iti03022023salonbackend.mapper.admin.AdminMapper;
+import ee.taltech.iti03022023salonbackend.mapper.admin.AdminUserMapper;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
 import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
 import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
@@ -25,11 +27,18 @@ import java.util.Optional;
 @Service
 public class AdminService {
     private final ValidityCheck validityCheck;
+    @Autowired
     private final AdminRepository adminRepository;
+    @Autowired
     private final AdminUserRepository adminUserRepository;
+    @Autowired
     private final ClientUserRepository clientUserRepository;
+    @Autowired
     private final CosmeticUserRepository cosmeticUserRepository;
-
+    @Autowired
+    private AdminMapper adminMapper;
+    @Autowired
+    private AdminUserMapper adminUserMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -42,7 +51,7 @@ public class AdminService {
     public List<AdminDto> getAllAdmins() {
         List<AdminDto> adminDtoList = new ArrayList<>();
         for (Admin admin : adminRepository.findAll()) {
-            adminDtoList.add(convertIntoAdminDto(admin));
+            adminDtoList.add(adminMapper.adminToAdminDto(admin));
         }
         return adminDtoList;
     }
@@ -56,7 +65,7 @@ public class AdminService {
     @Transactional
     public AdminDto getAdmin(Long id) {
         Optional<Admin> existingAdmin = adminRepository.findById(id);
-        return existingAdmin.map(this::convertIntoAdminDto).orElse(null);
+        return existingAdmin.map(admin -> adminMapper.adminToAdminDto(admin)).orElse(null);
     }
 
     /**
@@ -84,7 +93,7 @@ public class AdminService {
     public List<AdminUserDto> getAllAdminUsers() {
         List<AdminUserDto> adminUserDtoList = new ArrayList<>();
         for (AdminUser adminUser : adminUserRepository.findAll()) {
-            adminUserDtoList.add(convertIntoAdminUserDto(adminUser));
+            adminUserDtoList.add(adminUserMapper.adminUserToAdminUserDto(adminUser));
         }
         return adminUserDtoList;
     }
@@ -215,27 +224,5 @@ public class AdminService {
         adminUserRepository.delete(adminUser);
         adminRepository.delete(admin);
         return "Admin " + admin.getFirstName() + " " + admin.getLastName() + " was removed from the database.";
-    }
-
-    /**
-     * Help function to convert original admin object into the data transfer object.
-     *
-     * @param admin to be converted
-     * @return dto of the original admin object
-     */
-    public AdminDto convertIntoAdminDto(Admin admin) {
-        return new AdminDto(admin.getAdminId(), admin.getFirstName(), admin.getLastName(),
-                admin.getPhoneNumber(), admin.getEmail(), admin.getIdCode(),
-                admin.getDateOfBirth(), admin.getHomeAddress());
-    }
-
-    /**
-     * Help function to convert original user object into the data transfer object.
-     *
-     * @param adminUser to be converted
-     * @return dto of the original user object
-     */
-    public AdminUserDto convertIntoAdminUserDto(AdminUser adminUser) {
-        return new AdminUserDto(adminUser.getUser_id(), adminUser.getAdmin().getAdminId(), adminUser.getPassword());
     }
 }

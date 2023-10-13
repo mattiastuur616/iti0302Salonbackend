@@ -4,6 +4,7 @@ import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class SalonServiceController {
+    @Autowired
     private final ServiceOfServices serviceOfServices;
 
 

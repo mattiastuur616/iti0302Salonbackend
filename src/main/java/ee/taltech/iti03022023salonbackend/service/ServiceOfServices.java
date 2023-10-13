@@ -1,6 +1,7 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
+import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import ee.taltech.iti03022023salonbackend.model.service.ServiceStatus;
@@ -11,6 +12,7 @@ import ee.taltech.iti03022023salonbackend.repository.service.ServiceStatusReposi
 import ee.taltech.iti03022023salonbackend.repository.service.ServiceTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,10 +22,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ServiceOfServices {
+    @Autowired
     private final CosmeticRepository cosmeticRepository;
+    @Autowired
     private final SalonServiceRepository salonServiceRepository;
+    @Autowired
     private final ServiceTypeRepository serviceTypeRepository;
+    @Autowired
     private final ServiceStatusRepository serviceStatusRepository;
+    @Autowired
+    private ServiceMapper serviceMapper;
 
     /**
      * Method for showing all the services existing in the database.
@@ -34,7 +42,7 @@ public class ServiceOfServices {
     public List<SalonServiceDto> getAllSalonServices() {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         for (SalonService salonService : salonServiceRepository.findAll()) {
-            salonServiceDtoList.add(convertIntoSalonServiceDto(salonService));
+            salonServiceDtoList.add(serviceMapper.serviceToServiceDto(salonService));
         }
         return salonServiceDtoList;
     }
@@ -63,8 +71,8 @@ public class ServiceOfServices {
      */
     @Transactional
     public SalonServiceDto getSalonServiceById(Long id) {
-        Optional<SalonService> service = salonServiceRepository.findById(id);
-        return service.map(this::convertIntoSalonServiceDto).orElse(null);
+        Optional<SalonService> existingService = salonServiceRepository.findById(id);
+        return existingService.map(service -> serviceMapper.serviceToServiceDto(service)).orElse(null);
     }
 
     /**
@@ -126,17 +134,5 @@ public class ServiceOfServices {
         }
         salonServiceRepository.delete(salonService);
         return "The service with the id " + salonService.getServiceId() + " was removed from the database.";
-    }
-
-    /**
-     * Help function to convert the original salon service object into the data transfer object.
-     *
-     * @param salonService to be converted
-     * @return dto of the original salon service object
-     */
-    public SalonServiceDto convertIntoSalonServiceDto(SalonService salonService) {
-        return new SalonServiceDto(salonService.getServiceId(), salonService.getServiceName(), salonService.getPrice(),
-                salonService.getServiceType().getTypeId(), salonService.getDuration(), salonService.getStartingTime(),
-                salonService.getServiceStatus().getStatusId(), salonService.getCosmetic().getCosmeticId());
     }
 }

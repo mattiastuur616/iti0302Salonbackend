@@ -4,6 +4,9 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
+import ee.taltech.iti03022023salonbackend.mapper.client.ClientMapper;
+import ee.taltech.iti03022023salonbackend.mapper.client.ClientUserMapper;
 import ee.taltech.iti03022023salonbackend.model.admin.AdminUser;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.model.client.ClientUser;
@@ -29,13 +32,24 @@ import java.util.Optional;
 @Service
 public class ClientService {
     private final ValidityCheck validityCheck;
+    @Autowired
     private final ClientRepository clientRepository;
+    @Autowired
     private final ClientUserRepository clientUserRepository;
+    @Autowired
     private final CosmeticUserRepository cosmeticUserRepository;
+    @Autowired
     private final AdminUserRepository adminUserRepository;
+    @Autowired
     private final RegistrationRepository registrationRepository;
+    @Autowired
     private final ServiceOfServices serviceOfServices;
-
+    @Autowired
+    private ClientMapper clientMapper;
+    @Autowired
+    private ClientUserMapper clientUserMapper;
+    @Autowired
+    private ServiceMapper serviceMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -48,7 +62,7 @@ public class ClientService {
     public List<ClientDto> getAllClients() {
         List<ClientDto> clientDtoList = new ArrayList<>();
         for (Client client : clientRepository.findAll()) {
-            clientDtoList.add(convertIntoClientDto(client));
+            clientDtoList.add(clientMapper.clientToClientDto(client));
         }
         return clientDtoList;
     }
@@ -62,7 +76,7 @@ public class ClientService {
     @Transactional
     public ClientDto getClient(Long id) {
         Optional<Client> existingClient = clientRepository.findById(id);
-        return existingClient.map(this::convertIntoClientDto).orElse(null);
+        return existingClient.map(client -> clientMapper.clientToClientDto(client)).orElse(null);
     }
 
     /**
@@ -90,7 +104,7 @@ public class ClientService {
     public List<ClientUserDto> getAllClientUsers() {
         List<ClientUserDto> clientUserDtoList = new ArrayList<>();
         for (ClientUser clientUser : clientUserRepository.findAll()) {
-            clientUserDtoList.add(convertIntoClientUserDto(clientUser));
+            clientUserDtoList.add(clientUserMapper.clientUserToClientUserDto(clientUser));
         }
         return clientUserDtoList;
     }
@@ -240,7 +254,7 @@ public class ClientService {
         Client client = existingClient.get();
         for (Registration registration : registrationRepository.findAll()) {
             if (registration.getClient().getClientId().equals(client.getClientId())) {
-                salonServiceDtoList.add(serviceOfServices.convertIntoSalonServiceDto(registration.getSalonService()));
+                salonServiceDtoList.add(serviceMapper.serviceToServiceDto(registration.getSalonService()));
             }
         }
         return salonServiceDtoList;
@@ -259,27 +273,5 @@ public class ClientService {
             client.setMoney(client.getMoney() + amount);
             clientRepository.save(client);
         }
-    }
-
-    /**
-     * Help function to convert original client object into the data transfer object.
-     *
-     * @param client to be converted
-     * @return dto of the original client object
-     */
-    public ClientDto convertIntoClientDto(Client client) {
-        return new ClientDto(client.getClientId(), client.getFirstName(), client.getLastName(), client.getMoney(),
-                client.getPhoneNumber(), client.getEmail(), client.getIdCode(), client.getDateOfBirth(),
-                client.getHomeAddress());
-    }
-
-    /**
-     * Help function to convert original user object into the data transfer object.
-     *
-     * @param clientUser to be converted
-     * @return dto of the original user object
-     */
-    public ClientUserDto convertIntoClientUserDto(ClientUser clientUser) {
-        return new ClientUserDto(clientUser.getUserId(), clientUser.getClient().getClientId(), clientUser.getPassword());
     }
 }

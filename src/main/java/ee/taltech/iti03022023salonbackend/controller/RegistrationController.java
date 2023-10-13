@@ -3,6 +3,7 @@ package ee.taltech.iti03022023salonbackend.controller;
 import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
 import ee.taltech.iti03022023salonbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class RegistrationController {
+    @Autowired
     private final RegistrationService registrationService;
 
 

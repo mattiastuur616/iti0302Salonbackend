@@ -6,6 +6,7 @@ import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.service.roles.CosmeticService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class CosmeticController {
+    @Autowired
     private final CosmeticService cosmeticService;
 
 

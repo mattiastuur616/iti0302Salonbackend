@@ -5,6 +5,7 @@ import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
 import ee.taltech.iti03022023salonbackend.service.roles.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class AdminController {
+    @Autowired
     private final AdminService adminService;
 
 

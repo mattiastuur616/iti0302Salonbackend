@@ -6,6 +6,7 @@ import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.service.roles.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class ClientController {
+    @Autowired
     private final ClientService clientService;
 
 
