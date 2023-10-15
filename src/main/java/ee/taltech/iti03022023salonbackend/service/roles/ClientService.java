@@ -4,6 +4,8 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.mapper.client.ClientMapper;
 import ee.taltech.iti03022023salonbackend.mapper.client.ClientUserMapper;
@@ -74,9 +76,12 @@ public class ClientService {
      * @return client dto
      */
     @Transactional
-    public ClientDto getClient(Long id) {
+    public ClientDto getClient(Long id) throws CannotFindClientException {
         Optional<Client> existingClient = clientRepository.findById(id);
-        return existingClient.map(client -> clientMapper.clientToClientDto(client)).orElse(null);
+        if (existingClient.isEmpty()) {
+            throw  new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
+        }
+        return clientMapper.clientToClientDto(existingClient.get());
     }
 
     /**
@@ -86,10 +91,10 @@ public class ClientService {
      * @return client's id
      */
     @Transactional
-    public Long getClientId(String email) {
+    public Long getClientId(String email) throws CannotFindClientException {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
         if (existingClient.isEmpty()) {
-            return null;
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_EMAIL_FOUND);
         }
         Client actualClient = existingClient.get();
         return actualClient.getClientId();
@@ -205,10 +210,10 @@ public class ClientService {
      * @return string of client's name
      */
     @Transactional
-    public String getClientName(String email) {
+    public String getClientName(String email) throws CannotFindClientException {
         Optional<Client> existingClient = clientRepository.findClientsByEmailIgnoreCase(email);
         if (existingClient.isEmpty()) {
-            return "Error";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_EMAIL_FOUND);
         }
         Client actualClient = existingClient.get();
         return actualClient.getFirstName() + " " + actualClient.getLastName();
@@ -222,15 +227,15 @@ public class ClientService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeClient(Long id) {
+    public String removeClient(Long id) throws CannotFindClientException, CannotFindUserException {
         Optional<Client> existingClient = clientRepository.findById(id);
         if (existingClient.isEmpty()) {
-            return "No such client in the database.";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
         }
         Client client = existingClient.get();
         Optional<ClientUser> existingUser = clientUserRepository.findUsersByClient(client);
         if (existingUser.isEmpty()) {
-            return "Error";
+            throw new CannotFindUserException(CannotFindUserException.Role.CLIENT);
         }
         ClientUser clientUser = existingUser.get();
         clientUserRepository.delete(clientUser);
@@ -245,11 +250,11 @@ public class ClientService {
      * @return the list of services either finished or not canceled by the client
      */
     @Transactional
-    public List<SalonServiceDto> getHistoryOfRegisteredServices(Long id) {
+    public List<SalonServiceDto> getHistoryOfRegisteredServices(Long id) throws CannotFindClientException {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         Optional<Client> existingClient = clientRepository.findById(id);
         if (existingClient.isEmpty()) {
-            return null;
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_EMAIL_FOUND);
         }
         Client client = existingClient.get();
         for (Registration registration : registrationRepository.findAll()) {

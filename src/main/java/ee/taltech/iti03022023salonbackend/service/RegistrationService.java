@@ -1,6 +1,9 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.*;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
+import ee.taltech.iti03022023salonbackend.exception.ServiceActionException;
 import ee.taltech.iti03022023salonbackend.mapper.RegistrationMapper;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
@@ -60,20 +63,21 @@ public class RegistrationService {
      * @return the string explaining the result
      */
     @Transactional
-    public String registerService(Long clientId, Long serviceId) {
+    public String registerService(Long clientId, Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
-            return "No such client in the database.";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
         } else if (existingSalonService.isEmpty()) {
-            return "No such service in the database.";
+            throw new CannotFindServiceException();
         }
         Client client = existingClient.get();
         SalonService salonService = existingSalonService.get();
         if (salonService.getServiceStatus().getStatusId() != 1) {
-            return "Service can't be registered because the service is already busy.";
+            throw new ServiceActionException(ServiceActionException.Action.REGISTER);
         } else if (client.getMoney() < salonService.getPrice()) {
-            return "Client can't register the service because they don't have enough money.";
+            throw new ServiceActionException(ServiceActionException.Action.REGISTER);
         }
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() + 1);
@@ -103,18 +107,19 @@ public class RegistrationService {
      * @return the string explaining the result
      */
     @Transactional
-    public String cancelService(Long clientId, Long serviceId) {
+    public String cancelService(Long clientId, Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
-            return "No such client in the database.";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
         } else if (existingSalonService.isEmpty()) {
-            return "No such service in the database.";
+            throw new CannotFindServiceException();
         }
         Client client = existingClient.get();
         SalonService salonService = existingSalonService.get();
         if (salonService.getServiceStatus().getStatusId() != 2) {
-            return "Service can't be cancelled because the service is either finished or not registered.";
+            throw new ServiceActionException(ServiceActionException.Action.CANCEL);
         }
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() - 1);
@@ -144,18 +149,19 @@ public class RegistrationService {
      * @return the string explaining the result
      */
     @Transactional
-    public String finishService(Long clientId, Long serviceId) {
+    public String finishService(Long clientId, Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
-            return "No such client in the database.";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
         } else if (existingSalonService.isEmpty()) {
-            return "No such service in the database.";
+            throw new CannotFindServiceException();
         }
         Client client = existingClient.get();
         SalonService salonService = existingSalonService.get();
         if (salonService.getServiceStatus().getStatusId() != 2) {
-            return "Service has already happened so the cosmetic will remove it.";
+            throw new ServiceActionException(ServiceActionException.Action.FINISH);
         }
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() + 1);
@@ -183,13 +189,14 @@ public class RegistrationService {
      * @return string
      */
     @Transactional
-    public String removeServiceAndRegistration(Long clientId, Long serviceId) {
+    public String removeServiceAndRegistration(Long clientId, Long serviceId) throws CannotFindClientException,
+            CannotFindServiceException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
-            return "No such client in the database.";
+            throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
         } else if (existingSalonService.isEmpty()) {
-            return "No such service in the database.";
+            throw new CannotFindServiceException();
         }
         Client client = existingClient.get();
         SalonService salonService = existingSalonService.get();

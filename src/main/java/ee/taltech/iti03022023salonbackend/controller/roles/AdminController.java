@@ -2,6 +2,8 @@ package ee.taltech.iti03022023salonbackend.controller.roles;
 
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindAdminException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
 import ee.taltech.iti03022023salonbackend.service.roles.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class AdminController {
      * @return admin dto
      */
     @GetMapping("/admin/{id}")
-    public AdminDto getAdmin(@PathVariable Long id) {
+    public AdminDto getAdmin(@PathVariable Long id) throws CannotFindAdminException {
         return adminService.getAdmin(id);
     }
 
@@ -46,7 +48,7 @@ public class AdminController {
      * @return admin id
      */
     @GetMapping("/getAdmin")
-    public Long getAdminId(@RequestParam String email) {
+    public Long getAdminId(@RequestParam String email) throws CannotFindAdminException {
         return adminService.getAdminId(email);
     }
 
@@ -79,7 +81,7 @@ public class AdminController {
      * @return string of full name
      */
     @GetMapping("/adminName")
-    public String getAdminName(@RequestParam String email) {
+    public String getAdminName(@RequestParam String email) throws CannotFindAdminException {
         return adminService.getAdminName(email);
     }
 
@@ -102,7 +104,7 @@ public class AdminController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeAdmin/{id}")
-    public String removeAdmin(@PathVariable Long id) {
+    public String removeAdmin(@PathVariable Long id) throws CannotFindAdminException, CannotFindUserException {
         return adminService.removeAdmin(id);
     }
 }

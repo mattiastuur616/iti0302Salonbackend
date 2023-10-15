@@ -3,6 +3,8 @@ package ee.taltech.iti03022023salonbackend.service.roles;
 import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindAdminException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.mapper.admin.AdminMapper;
 import ee.taltech.iti03022023salonbackend.mapper.admin.AdminUserMapper;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
@@ -63,9 +65,12 @@ public class AdminService {
      * @return admin dto
      */
     @Transactional
-    public AdminDto getAdmin(Long id) {
+    public AdminDto getAdmin(Long id) throws CannotFindAdminException {
         Optional<Admin> existingAdmin = adminRepository.findById(id);
-        return existingAdmin.map(admin -> adminMapper.adminToAdminDto(admin)).orElse(null);
+        if (existingAdmin.isEmpty()) {
+            throw new CannotFindAdminException(CannotFindAdminException.Reason.NO_ID_FOUND);
+        }
+        return adminMapper.adminToAdminDto(existingAdmin.get());
     }
 
     /**
@@ -75,10 +80,10 @@ public class AdminService {
      * @return admin id
      */
     @Transactional
-    public Long getAdminId(String email) {
+    public Long getAdminId(String email) throws CannotFindAdminException {
         Optional<Admin> existingAdmin = adminRepository.findAdminsByEmailIgnoreCase(email);
         if (existingAdmin.isEmpty()) {
-            return null;
+            throw new CannotFindAdminException(CannotFindAdminException.Reason.NO_EMAIL_FOUND);
         }
         Admin actualAdmin = existingAdmin.get();
         return actualAdmin.getAdminId();
@@ -193,10 +198,10 @@ public class AdminService {
      * @return string of admin name
      */
     @Transactional
-    public String getAdminName(String email) {
+    public String getAdminName(String email) throws CannotFindAdminException {
         Optional<Admin> existingAdmin = adminRepository.findAdminsByEmailIgnoreCase(email);
         if (existingAdmin.isEmpty()) {
-            return "Error";
+            throw new CannotFindAdminException(CannotFindAdminException.Reason.NO_EMAIL_FOUND);
         }
         Admin actualAdmin = existingAdmin.get();
         return actualAdmin.getFirstName() + " " + actualAdmin.getLastName();
@@ -210,15 +215,15 @@ public class AdminService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeAdmin(Long id) {
+    public String removeAdmin(Long id) throws CannotFindAdminException, CannotFindUserException {
         Optional<Admin> existingAdmin = adminRepository.findById(id);
         if (existingAdmin.isEmpty()) {
-            return "No such admin in the database.";
+            throw new CannotFindAdminException(CannotFindAdminException.Reason.NO_ID_FOUND);
         }
         Admin admin = existingAdmin.get();
         Optional<AdminUser> existingUser = adminUserRepository.findAdminUserByAdmin(admin);
         if (existingUser.isEmpty()) {
-            return "Error";
+            throw new CannotFindUserException(CannotFindUserException.Role.ADMIN);
         }
         AdminUser adminUser = existingUser.get();
         adminUserRepository.delete(adminUser);

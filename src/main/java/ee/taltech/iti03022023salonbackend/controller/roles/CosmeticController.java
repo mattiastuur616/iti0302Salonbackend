@@ -3,6 +3,8 @@ package ee.taltech.iti03022023salonbackend.controller.roles;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.service.roles.CosmeticService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class CosmeticController {
      * @return cosmetic dto
      */
     @GetMapping("/cosmetic/{id}")
-    public CosmeticDto getCosmetic(@PathVariable Long id) {
+    public CosmeticDto getCosmetic(@PathVariable Long id) throws CannotFindCosmeticException {
         return cosmeticService.getCosmetic(id);
     }
 
@@ -47,7 +49,7 @@ public class CosmeticController {
      * @return cosmetic's id
      */
     @GetMapping("/getCosmetic")
-    public Long getCosmeticId(@RequestParam String email) {
+    public Long getCosmeticId(@RequestParam String email) throws CannotFindCosmeticException {
         return cosmeticService.getCosmeticId(email);
     }
 
@@ -91,7 +93,7 @@ public class CosmeticController {
      * @return string of full name
      */
     @GetMapping("/cosmeticName")
-    public String getCosmeticName(@RequestParam String email) {
+    public String getCosmeticName(@RequestParam String email) throws CannotFindCosmeticException {
         return cosmeticService.getCosmeticName(email);
     }
 
@@ -102,7 +104,7 @@ public class CosmeticController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeCosmetic/{id}")
-    public String removeCosmetic(@PathVariable Long id) {
+    public String removeCosmetic(@PathVariable Long id) throws CannotFindCosmeticException, CannotFindUserException {
         return cosmeticService.removeCosmetic(id);
     }
 
@@ -113,7 +115,7 @@ public class CosmeticController {
      * @return the list of services
      */
     @GetMapping("/allTasks/{id}")
-    public List<SalonServiceDto> getAllServicesOfCosmetic(@PathVariable Long id) {
+    public List<SalonServiceDto> getAllServicesOfCosmetic(@PathVariable Long id) throws CannotFindCosmeticException {
         return cosmeticService.getAllServicesOfCosmetic(id);
     }
 
@@ -124,7 +126,7 @@ public class CosmeticController {
      * @return the list of services
      */
     @GetMapping("/openTasks/{id}")
-    public List<SalonServiceDto> getOpenServices(@PathVariable Long id) {
+    public List<SalonServiceDto> getOpenServices(@PathVariable Long id) throws CannotFindCosmeticException {
         return cosmeticService.getOpenServices(id);
     }
 
@@ -135,7 +137,7 @@ public class CosmeticController {
      * @return the list of services
      */
     @GetMapping("/busyTasks/{id}")
-    public List<SalonServiceDto> getRegisteredServices(@PathVariable Long id) {
+    public List<SalonServiceDto> getRegisteredServices(@PathVariable Long id) throws CannotFindCosmeticException {
         return cosmeticService.getRegisteredServices(id);
     }
 
@@ -146,7 +148,7 @@ public class CosmeticController {
      * @return the list of services
      */
     @GetMapping("/endedTasks/{id}")
-    public List<SalonServiceDto> getFinishedServices(@PathVariable Long id) {
+    public List<SalonServiceDto> getFinishedServices(@PathVariable Long id) throws CannotFindCosmeticException {
         return cosmeticService.getFinishedServices(id);
     }
 }

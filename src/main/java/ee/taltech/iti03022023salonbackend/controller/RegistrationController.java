@@ -1,6 +1,9 @@
 package ee.taltech.iti03022023salonbackend.controller;
 
 import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
+import ee.taltech.iti03022023salonbackend.exception.ServiceActionException;
 import ee.taltech.iti03022023salonbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,8 @@ public class RegistrationController {
      * @return the string explaining the result
      */
     @PostMapping("/registerService")
-    public String registerService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+    public String registerService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         return registrationService.registerService(clientId, serviceId);
     }
 
@@ -46,7 +50,8 @@ public class RegistrationController {
      * @return the string explaining the result
      */
     @DeleteMapping("/cancelService")
-    public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+    public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         return registrationService.cancelService(clientId, serviceId);
     }
 
@@ -58,7 +63,8 @@ public class RegistrationController {
      * @return the string explaining the result
      */
     @PutMapping("/finishService")
-    public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) {
+    public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
+            ServiceActionException, CannotFindServiceException {
         return registrationService.finishService(clientId, serviceId);
     }
 
@@ -70,7 +76,8 @@ public class RegistrationController {
      * @return string
      */
     @DeleteMapping("/removeRegistration")
-    public String removeServiceAndRegistration(@RequestParam Long clientId, @RequestParam Long serviceId) {
+    public String removeServiceAndRegistration(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
+            CannotFindServiceException {
         return registrationService.removeServiceAndRegistration(clientId, serviceId);
     }
 

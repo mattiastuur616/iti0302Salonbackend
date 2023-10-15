@@ -1,0 +1,17 @@
+package ee.taltech.iti03022023salonbackend.exception;
+
+public class CannotFindClientException extends Throwable {
+    private Reason reason;
+    public enum Reason {
+        NO_ID_FOUND,
+        NO_EMAIL_FOUND
+    }
+
+    public CannotFindClientException(Reason reason) {
+        this.reason = reason;
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
+}

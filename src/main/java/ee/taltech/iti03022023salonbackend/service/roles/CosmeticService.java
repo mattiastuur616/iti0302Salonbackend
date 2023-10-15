@@ -4,6 +4,8 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticMapper;
 import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticUserMapper;
@@ -74,9 +76,12 @@ public class CosmeticService {
      * @return cosmetic dto
      */
     @Transactional
-    public CosmeticDto getCosmetic(Long id) {
+    public CosmeticDto getCosmetic(Long id) throws CannotFindCosmeticException {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
-        return existingCosmetic.map(cosmetic -> cosmeticMapper.cosmeticToCosmeticDto(cosmetic)).orElse(null);
+        if (existingCosmetic.isEmpty()) {
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_ID_FOUND);
+        }
+        return cosmeticMapper.cosmeticToCosmeticDto(existingCosmetic.get());
     }
 
     /**
@@ -86,10 +91,10 @@ public class CosmeticService {
      * @return cosmetic's id
      */
     @Transactional
-    public Long getCosmeticId(String email) {
+    public Long getCosmeticId(String email) throws CannotFindCosmeticException {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findCosmeticsByEmailIgnoreCase(email);
         if (existingCosmetic.isEmpty()) {
-            return null;
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_EMAIL_FOUND);
         }
         Cosmetic actualCosmetic = existingCosmetic.get();
         return actualCosmetic.getCosmeticId();
@@ -204,10 +209,10 @@ public class CosmeticService {
      * @return string of cosmetic's name
      */
     @Transactional
-    public String getCosmeticName(String email) {
+    public String getCosmeticName(String email) throws CannotFindCosmeticException {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findCosmeticsByEmailIgnoreCase(email);
         if (existingCosmetic.isEmpty()) {
-            return "Error";
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_EMAIL_FOUND);
         }
         Cosmetic actualCosmetic = existingCosmetic.get();
         return actualCosmetic.getFirstName() + " " + actualCosmetic.getLastName();
@@ -221,15 +226,15 @@ public class CosmeticService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeCosmetic(Long id) {
+    public String removeCosmetic(Long id) throws CannotFindCosmeticException, CannotFindUserException {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
         if (existingCosmetic.isEmpty()) {
-            return "No such cosmetic in the database.";
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_ID_FOUND);
         }
         Cosmetic cosmetic = existingCosmetic.get();
         Optional<CosmeticUser> existingUser = cosmeticUserRepository.findCosmeticUsersByCosmetic(cosmetic);
         if (existingUser.isEmpty()) {
-            return "Error";
+            throw new CannotFindUserException(CannotFindUserException.Role.COSMETIC);
         }
         CosmeticUser cosmeticUser = existingUser.get();
         cosmeticUserRepository.delete(cosmeticUser);
@@ -245,11 +250,11 @@ public class CosmeticService {
      * @return the list of services performed by that cosmetic
      */
     @Transactional
-    public List<SalonServiceDto> getAllServicesOfCosmetic(Long id) {
+    public List<SalonServiceDto> getAllServicesOfCosmetic(Long id) throws CannotFindCosmeticException {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
         if (existingCosmetic.isEmpty()) {
-            return null;
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_ID_FOUND);
         }
         for (SalonService salonService : salonServiceRepository.findAllByCosmetic(existingCosmetic.get())) {
             salonServiceDtoList.add(serviceMapper.serviceToServiceDto(salonService));
@@ -264,7 +269,7 @@ public class CosmeticService {
      * @return the list of service dto-s
      */
     @Transactional
-    public List<SalonServiceDto> getOpenServices(Long id) {
+    public List<SalonServiceDto> getOpenServices(Long id) throws CannotFindCosmeticException {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
             if (salonServiceDto.getStatusId() == 1) {
@@ -281,7 +286,7 @@ public class CosmeticService {
      * @return the list of service dto-s
      */
     @Transactional
-    public List<SalonServiceDto> getRegisteredServices(Long id) {
+    public List<SalonServiceDto> getRegisteredServices(Long id) throws CannotFindCosmeticException {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
             if (salonServiceDto.getStatusId() == 2) {
@@ -298,7 +303,7 @@ public class CosmeticService {
      * @return the list of service dto-s
      */
     @Transactional
-    public List<SalonServiceDto> getFinishedServices(Long id) {
+    public List<SalonServiceDto> getFinishedServices(Long id) throws CannotFindCosmeticException {
         List<SalonServiceDto> salonServiceDtoList = new ArrayList<>();
         for (SalonServiceDto salonServiceDto : getAllServicesOfCosmetic(id)) {
             if (salonServiceDto.getStatusId() == 3) {

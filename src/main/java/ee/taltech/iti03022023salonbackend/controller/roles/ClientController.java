@@ -3,6 +3,8 @@ package ee.taltech.iti03022023salonbackend.controller.roles;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.service.roles.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class ClientController {
      * @return client dto
      */
     @GetMapping("/client/{id}")
-    public ClientDto getClient(@PathVariable Long id) {
+    public ClientDto getClient(@PathVariable Long id) throws CannotFindClientException {
         return clientService.getClient(id);
     }
 
@@ -47,7 +49,7 @@ public class ClientController {
      * @return client's id
      */
     @GetMapping("/getClient")
-    public Long getClientId(@RequestParam String email) {
+    public Long getClientId(@RequestParam String email) throws CannotFindClientException {
         return clientService.getClientId(email);
     }
 
@@ -78,7 +80,7 @@ public class ClientController {
      * @return string of full name
      */
     @GetMapping("/clientName")
-    public String getClientName(@RequestParam String email) {
+    public String getClientName(@RequestParam String email) throws CannotFindClientException {
         return clientService.getClientName(email);
     }
 
@@ -112,7 +114,7 @@ public class ClientController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeClient/{id}")
-    public String removeClient(@PathVariable Long id) {
+    public String removeClient(@PathVariable Long id) throws CannotFindClientException, CannotFindUserException {
         return clientService.removeClient(id);
     }
 
@@ -124,7 +126,7 @@ public class ClientController {
      * @return the list of services
      */
     @GetMapping("/getHistory/{id}")
-    public List<SalonServiceDto> getHistoryOfRegisteredServices(@PathVariable Long id) {
+    public List<SalonServiceDto> getHistoryOfRegisteredServices(@PathVariable Long id) throws CannotFindClientException {
         return clientService.getHistoryOfRegisteredServices(id);
     }
 }
