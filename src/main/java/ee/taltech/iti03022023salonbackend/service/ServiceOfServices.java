@@ -1,6 +1,10 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindStatusException;
+import ee.taltech.iti03022023salonbackend.exception.ServiceErrorException;
 import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
@@ -70,9 +74,12 @@ public class ServiceOfServices {
      * @return dto of the service
      */
     @Transactional
-    public SalonServiceDto getSalonServiceById(Long id) {
+    public SalonServiceDto getSalonServiceById(Long id) throws CannotFindServiceException {
         Optional<SalonService> existingService = salonServiceRepository.findById(id);
-        return existingService.map(service -> serviceMapper.serviceToServiceDto(service)).orElse(null);
+        if (existingService.isEmpty()) {
+            throw new CannotFindServiceException();
+        }
+        return serviceMapper.serviceToServiceDto(existingService.get());
     }
 
     /**
@@ -82,7 +89,8 @@ public class ServiceOfServices {
      * @return the string explaining the result
      */
     @Transactional
-    public String addSalonService(SalonService salonService, Long cosmeticId) {
+    public String addSalonService(SalonService salonService, Long cosmeticId) throws CannotFindStatusException,
+            ServiceErrorException, CannotFindCosmeticException {
         Optional<SalonService> existingSalonService = salonServiceRepository
                 .getSalonServicesByCosmeticAndAndStartingTime(salonService.getCosmetic(), salonService.getStartingTime());
         Optional<ServiceType> existingServiceType = serviceTypeRepository
@@ -90,19 +98,19 @@ public class ServiceOfServices {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(cosmeticId);
         Optional<ServiceStatus> existingStatus = serviceStatusRepository.findById(Long.parseLong("1"));
         if (existingSalonService.isPresent()) {
-            return "Service is already in the database.";
+            throw new ServiceErrorException(ServiceErrorException.Reason.SERVICE_EXISTS);
         } else if (existingServiceType.isEmpty()) {
-            return "Can't add the service because there's no such service type in the salon.";
+            throw new ServiceErrorException(ServiceErrorException.Reason.WRONG_TYPE);
         } else if (existingCosmetic.isEmpty()) {
-            return "Can't add the service because there's no such cosmetic in the salon.";
+            throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_ID_FOUND);
         } else if (existingStatus.isEmpty()) {
-            return "No such status.";
+            throw new CannotFindStatusException();
         }
         salonService.setCosmetic(existingCosmetic.get());
         salonService.setServiceType(existingServiceType.get());
         salonService.setServiceStatus(existingStatus.get());
         if (salonService.getServiceStatus().getStatusId() != 1) {
-            return "Can't add the service because its status isn't available but should.";
+            throw new ServiceErrorException(ServiceErrorException.Reason.WRONG_STATUS);
         } else if (salonService.getServiceName().isEmpty()) {
             return "1";
         } else if (salonService.getPrice() == null) {
@@ -123,15 +131,12 @@ public class ServiceOfServices {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeSalonService(Long id) {
+    public String removeSalonService(Long id) throws CannotFindServiceException {
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(id);
         if (existingSalonService.isEmpty()) {
-            return "No such service in the database.";
+            throw new CannotFindServiceException();
         }
         SalonService salonService = existingSalonService.get();
-        if (salonService.getServiceStatus().getServiceStatus().equalsIgnoreCase("finished")) {
-            return "The service is finished and will remain as a part of client's registrations history.";
-        }
         salonServiceRepository.delete(salonService);
         return "The service with the id " + salonService.getServiceId() + " was removed from the database.";
     }

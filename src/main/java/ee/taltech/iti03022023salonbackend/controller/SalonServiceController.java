@@ -1,6 +1,10 @@
 package ee.taltech.iti03022023salonbackend.controller;
 
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindStatusException;
+import ee.taltech.iti03022023salonbackend.exception.ServiceErrorException;
 import ee.taltech.iti03022023salonbackend.model.service.SalonService;
 import ee.taltech.iti03022023salonbackend.service.ServiceOfServices;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +48,7 @@ public class SalonServiceController {
      * @return dto of the service
      */
     @GetMapping("/service/{id}")
-    public SalonServiceDto getSalonServiceById(@PathVariable Long id) {
+    public SalonServiceDto getSalonServiceById(@PathVariable Long id) throws CannotFindServiceException {
         return serviceOfServices.getSalonServiceById(id);
     }
 
@@ -55,7 +59,8 @@ public class SalonServiceController {
      * @return the string explaining the result
      */
     @PostMapping("/addService")
-    public String addSalonService(@RequestBody SalonService salonService, @RequestParam Long cosmeticId) {
+    public String addSalonService(@RequestBody SalonService salonService, @RequestParam Long cosmeticId) throws CannotFindStatusException,
+            ServiceErrorException, CannotFindCosmeticException {
         return serviceOfServices.addSalonService(salonService, cosmeticId);
     }
 
@@ -66,7 +71,7 @@ public class SalonServiceController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeService/{id}")
-    public String removeSalonService(@PathVariable Long id) {
+    public String removeSalonService(@PathVariable Long id) throws CannotFindServiceException {
         return serviceOfServices.removeSalonService(id);
     }
 }

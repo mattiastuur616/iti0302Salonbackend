@@ -4,7 +4,7 @@ import ee.taltech.iti03022023salonbackend.config.ValidityCheck;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindAdminException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.mapper.admin.AdminMapper;
 import ee.taltech.iti03022023salonbackend.mapper.admin.AdminUserMapper;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
@@ -215,7 +215,7 @@ public class AdminService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeAdmin(Long id) throws CannotFindAdminException, CannotFindUserException {
+    public String removeAdmin(Long id) throws CannotFindAdminException, UserMissingException {
         Optional<Admin> existingAdmin = adminRepository.findById(id);
         if (existingAdmin.isEmpty()) {
             throw new CannotFindAdminException(CannotFindAdminException.Reason.NO_ID_FOUND);
@@ -223,7 +223,7 @@ public class AdminService {
         Admin admin = existingAdmin.get();
         Optional<AdminUser> existingUser = adminUserRepository.findAdminUserByAdmin(admin);
         if (existingUser.isEmpty()) {
-            throw new CannotFindUserException(CannotFindUserException.Role.ADMIN);
+            throw new UserMissingException(UserMissingException.Role.ADMIN);
         }
         AdminUser adminUser = existingUser.get();
         adminUserRepository.delete(adminUser);

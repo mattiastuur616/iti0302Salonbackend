@@ -5,7 +5,7 @@ import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.mapper.client.ClientMapper;
 import ee.taltech.iti03022023salonbackend.mapper.client.ClientUserMapper;
@@ -227,7 +227,7 @@ public class ClientService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeClient(Long id) throws CannotFindClientException, CannotFindUserException {
+    public String removeClient(Long id) throws CannotFindClientException, UserMissingException {
         Optional<Client> existingClient = clientRepository.findById(id);
         if (existingClient.isEmpty()) {
             throw new CannotFindClientException(CannotFindClientException.Reason.NO_ID_FOUND);
@@ -235,7 +235,7 @@ public class ClientService {
         Client client = existingClient.get();
         Optional<ClientUser> existingUser = clientUserRepository.findUsersByClient(client);
         if (existingUser.isEmpty()) {
-            throw new CannotFindUserException(CannotFindUserException.Role.CLIENT);
+            throw new UserMissingException(UserMissingException.Role.CLIENT);
         }
         ClientUser clientUser = existingUser.get();
         clientUserRepository.delete(clientUser);

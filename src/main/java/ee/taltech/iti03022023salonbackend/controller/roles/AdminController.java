@@ -3,7 +3,7 @@ package ee.taltech.iti03022023salonbackend.controller.roles;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminDto;
 import ee.taltech.iti03022023salonbackend.dto.admin.AdminUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindAdminException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.model.admin.Admin;
 import ee.taltech.iti03022023salonbackend.service.roles.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,7 @@ public class AdminController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeAdmin/{id}")
-    public String removeAdmin(@PathVariable Long id) throws CannotFindAdminException, CannotFindUserException {
+    public String removeAdmin(@PathVariable Long id) throws CannotFindAdminException, UserMissingException {
         return adminService.removeAdmin(id);
     }
 }

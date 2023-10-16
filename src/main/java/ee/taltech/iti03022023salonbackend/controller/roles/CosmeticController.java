@@ -4,7 +4,7 @@ import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.service.roles.CosmeticService;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,7 @@ public class CosmeticController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeCosmetic/{id}")
-    public String removeCosmetic(@PathVariable Long id) throws CannotFindCosmeticException, CannotFindUserException {
+    public String removeCosmetic(@PathVariable Long id) throws CannotFindCosmeticException, UserMissingException {
         return cosmeticService.removeCosmetic(id);
     }
 

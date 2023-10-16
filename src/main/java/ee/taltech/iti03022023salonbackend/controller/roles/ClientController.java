@@ -4,7 +4,7 @@ import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientDto;
 import ee.taltech.iti03022023salonbackend.dto.client.ClientUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.service.roles.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -114,7 +114,7 @@ public class ClientController {
      * @return the string explaining the result
      */
     @DeleteMapping("/removeClient/{id}")
-    public String removeClient(@PathVariable Long id) throws CannotFindClientException, CannotFindUserException {
+    public String removeClient(@PathVariable Long id) throws CannotFindClientException, UserMissingException {
         return clientService.removeClient(id);
     }
 

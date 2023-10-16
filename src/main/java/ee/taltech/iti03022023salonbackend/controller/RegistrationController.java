@@ -1,9 +1,7 @@
 package ee.taltech.iti03022023salonbackend.controller;
 
 import ee.taltech.iti03022023salonbackend.dto.RegistrationDto;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
-import ee.taltech.iti03022023salonbackend.exception.ServiceActionException;
+import ee.taltech.iti03022023salonbackend.exception.*;
 import ee.taltech.iti03022023salonbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,7 @@ public class RegistrationController {
      */
     @PostMapping("/registerService")
     public String registerService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindStatusException {
         return registrationService.registerService(clientId, serviceId);
     }
 
@@ -51,7 +49,7 @@ public class RegistrationController {
      */
     @DeleteMapping("/cancelService")
     public String cancelService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindRegistrationException, CannotFindStatusException {
         return registrationService.cancelService(clientId, serviceId);
     }
 
@@ -64,7 +62,7 @@ public class RegistrationController {
      */
     @PutMapping("/finishService")
     public String finishService(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindRegistrationException, CannotFindStatusException {
         return registrationService.finishService(clientId, serviceId);
     }
 
@@ -77,7 +75,7 @@ public class RegistrationController {
      */
     @DeleteMapping("/removeRegistration")
     public String removeServiceAndRegistration(@RequestParam Long clientId, @RequestParam Long serviceId) throws CannotFindClientException,
-            CannotFindServiceException {
+            CannotFindServiceException, CannotFindRegistrationException {
         return registrationService.removeServiceAndRegistration(clientId, serviceId);
     }
 
@@ -88,7 +86,7 @@ public class RegistrationController {
      * @return client's id
      */
     @GetMapping("/registeredClient/{serviceId}")
-    public Long getClientOfRegisteredService(@PathVariable Long serviceId) {
+    public Long getClientOfRegisteredService(@PathVariable Long serviceId) throws CannotFindServiceException {
         return registrationService.getClientOfRegisteredService(serviceId);
     }
 }

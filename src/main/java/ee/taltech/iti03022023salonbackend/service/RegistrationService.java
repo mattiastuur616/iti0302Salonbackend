@@ -1,9 +1,7 @@
 package ee.taltech.iti03022023salonbackend.service;
 
 import ee.taltech.iti03022023salonbackend.dto.*;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindServiceException;
-import ee.taltech.iti03022023salonbackend.exception.ServiceActionException;
+import ee.taltech.iti03022023salonbackend.exception.*;
 import ee.taltech.iti03022023salonbackend.mapper.RegistrationMapper;
 import ee.taltech.iti03022023salonbackend.model.*;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
@@ -64,7 +62,7 @@ public class RegistrationService {
      */
     @Transactional
     public String registerService(Long clientId, Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindStatusException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
@@ -82,7 +80,7 @@ public class RegistrationService {
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() + 1);
         if (existingServiceStatus.isEmpty()) {
-            return "Error with the missing status in the database.";
+            throw new CannotFindStatusException();
         }
         ServiceStatus newStatus = existingServiceStatus.get();
         client.setMoney(client.getMoney() - salonService.getPrice());
@@ -108,7 +106,8 @@ public class RegistrationService {
      */
     @Transactional
     public String cancelService(Long clientId, Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindRegistrationException,
+            CannotFindStatusException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
@@ -124,7 +123,7 @@ public class RegistrationService {
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() - 1);
         if (existingServiceStatus.isEmpty()) {
-            return "Error with the missing status in the database.";
+            throw new CannotFindStatusException();
         }
         ServiceStatus newStatus = existingServiceStatus.get();
         client.setMoney(client.getMoney() + salonService.getPrice());
@@ -132,7 +131,7 @@ public class RegistrationService {
         Optional<Registration> existingRegistration = registrationRepository
                 .findAllByClientAndSalonService(client, salonService);
         if (existingRegistration.isEmpty()) {
-            return "Error: can't find the registration in the database.";
+            throw new CannotFindRegistrationException();
         }
         Registration registration = existingRegistration.get();
         registrationRepository.delete(registration);
@@ -150,7 +149,8 @@ public class RegistrationService {
      */
     @Transactional
     public String finishService(Long clientId, Long serviceId) throws CannotFindClientException,
-            ServiceActionException, CannotFindServiceException {
+            ServiceActionException, CannotFindServiceException, CannotFindRegistrationException,
+            CannotFindStatusException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
@@ -166,14 +166,14 @@ public class RegistrationService {
         Optional<ServiceStatus> existingServiceStatus = serviceStatusRepository
                 .findById(salonService.getServiceStatus().getStatusId() + 1);
         if (existingServiceStatus.isEmpty()) {
-            return "Error with the missing status in the database.";
+            throw new CannotFindStatusException();
         }
         ServiceStatus newStatus = existingServiceStatus.get();
         salonService.setServiceStatus(newStatus);
         Optional<Registration> existingRegistration = registrationRepository
                 .findAllByClientAndSalonService(client, salonService);
         if (existingRegistration.isEmpty()) {
-            return "Error: can't find the registration in the database.";
+            throw new CannotFindRegistrationException();
         }
         salonServiceRepository.save(salonService);
         Registration registration = existingRegistration.get();
@@ -190,7 +190,7 @@ public class RegistrationService {
      */
     @Transactional
     public String removeServiceAndRegistration(Long clientId, Long serviceId) throws CannotFindClientException,
-            CannotFindServiceException {
+            CannotFindServiceException, CannotFindRegistrationException {
         Optional<Client> existingClient = clientRepository.findById(clientId);
         Optional<SalonService> existingSalonService = salonServiceRepository.findById(serviceId);
         if (existingClient.isEmpty()) {
@@ -203,7 +203,7 @@ public class RegistrationService {
         Optional<Registration> existingRegistration = registrationRepository
                 .findAllByClientAndSalonService(client, salonService);
         if (existingRegistration.isEmpty()) {
-            return "Error: can't find the registration in the database.";
+            throw new CannotFindRegistrationException();
         }
         Registration registration = existingRegistration.get();
         registrationRepository.delete(registration);
@@ -218,10 +218,10 @@ public class RegistrationService {
      * @return client's id
      */
     @Transactional
-    public Long getClientOfRegisteredService(Long serviceId) {
+    public Long getClientOfRegisteredService(Long serviceId) throws CannotFindServiceException {
         Optional<SalonService> existingService = salonServiceRepository.findById(serviceId);
         if (existingService.isEmpty()) {
-            return null;
+            throw new CannotFindServiceException();
         }
         SalonService service = existingService.get();
         Optional<Registration> existingRegistration = registrationRepository.findAllBySalonService(service);

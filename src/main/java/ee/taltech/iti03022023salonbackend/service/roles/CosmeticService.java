@@ -5,7 +5,7 @@ import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticDto;
 import ee.taltech.iti03022023salonbackend.dto.SalonServiceDto;
 import ee.taltech.iti03022023salonbackend.dto.cosmetic.CosmeticUserDto;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
-import ee.taltech.iti03022023salonbackend.exception.CannotFindUserException;
+import ee.taltech.iti03022023salonbackend.exception.UserMissingException;
 import ee.taltech.iti03022023salonbackend.mapper.ServiceMapper;
 import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticMapper;
 import ee.taltech.iti03022023salonbackend.mapper.cosmetic.CosmeticUserMapper;
@@ -226,7 +226,7 @@ public class CosmeticService {
      * @return the string explaining the result
      */
     @Transactional
-    public String removeCosmetic(Long id) throws CannotFindCosmeticException, CannotFindUserException {
+    public String removeCosmetic(Long id) throws CannotFindCosmeticException, UserMissingException {
         Optional<Cosmetic> existingCosmetic = cosmeticRepository.findById(id);
         if (existingCosmetic.isEmpty()) {
             throw new CannotFindCosmeticException(CannotFindCosmeticException.Reason.NO_ID_FOUND);
@@ -234,7 +234,7 @@ public class CosmeticService {
         Cosmetic cosmetic = existingCosmetic.get();
         Optional<CosmeticUser> existingUser = cosmeticUserRepository.findCosmeticUsersByCosmetic(cosmetic);
         if (existingUser.isEmpty()) {
-            throw new CannotFindUserException(CannotFindUserException.Role.COSMETIC);
+            throw new UserMissingException(UserMissingException.Role.COSMETIC);
         }
         CosmeticUser cosmeticUser = existingUser.get();
         cosmeticUserRepository.delete(cosmeticUser);
