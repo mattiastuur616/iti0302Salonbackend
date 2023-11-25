@@ -7,6 +7,7 @@ import ee.taltech.iti03022023salonbackend.controller.roles.AdminController;
 import ee.taltech.iti03022023salonbackend.controller.roles.ClientController;
 import ee.taltech.iti03022023salonbackend.controller.roles.CosmeticController;
 import ee.taltech.iti03022023salonbackend.exception.CannotFindClientException;
+import ee.taltech.iti03022023salonbackend.exception.CannotFindCosmeticException;
 import ee.taltech.iti03022023salonbackend.model.client.Client;
 import ee.taltech.iti03022023salonbackend.model.cosmetic.Cosmetic;
 import ee.taltech.iti03022023salonbackend.repository.RegistrationRepository;
@@ -14,6 +15,7 @@ import ee.taltech.iti03022023salonbackend.repository.admin.AdminRepository;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientRepository;
 import ee.taltech.iti03022023salonbackend.repository.client.ClientUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticRepository;
+import ee.taltech.iti03022023salonbackend.repository.cosmetic.CosmeticUserRepository;
 import ee.taltech.iti03022023salonbackend.repository.service.SalonServiceRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,8 @@ public class ClientServiceTest {
     @Autowired
     private SalonServiceRepository salonServiceRepository;
     @Autowired
+    private CosmeticUserRepository cosmeticUserRepository;
+    @Autowired
     private CosmeticRepository cosmeticRepository;
     @Autowired
     private AdminRepository adminRepository;
@@ -74,6 +78,9 @@ public class ClientServiceTest {
         registrationRepository.deleteAll();
         clientUserRepository.deleteAll();
         clientRepository.deleteAll();
+        salonServiceRepository.deleteAll();
+        cosmeticUserRepository.deleteAll();
+        cosmeticRepository.deleteAll();
         Client firstClient = new Client();
         firstClient.setFirstName("Ahsoka");
         firstClient.setLastName("Tano");
@@ -107,7 +114,7 @@ public class ClientServiceTest {
         Cosmetic secondCosmetic = new Cosmetic();
         secondCosmetic.setFirstName("Mari");
         secondCosmetic.setLastName("Pääsuke");
-        secondCosmetic.setPhoneNumber("Pääsuke");
+        secondCosmetic.setPhoneNumber("58392033");
         secondCosmetic.setEmail("mari.paasuke@gmail.com");
         secondCosmetic.setIdCode("50208114833");
         secondCosmetic.setDateOfBirth(new Date(12, 1, 24));
@@ -128,7 +135,7 @@ public class ClientServiceTest {
                 .getClient(clientController.getClientId("ahsoka.tano@gmail.com")).getMoney());
         assertEquals(0, clientController
                 .getClient(clientController.getClientId("anakin.skywalker@gmail.com")).getMoney());
-        assertEquals(2, clientRepository.findAll().size());
+        assertEquals(2, clientController.getAllClients().size());
     }
 
     @SneakyThrows
@@ -273,5 +280,150 @@ public class ClientServiceTest {
         clientController.removeClient(clientController.getClientId("ahsoka.tano@gmail.com"));
         assertEquals(1, clientController.getAllClients().size());
         assertThrows(CannotFindClientException.class, () -> clientController.getClient(clientController.getClientId("ahsoka.tano@gmail.com")));
+    }
+
+    @SneakyThrows
+    @Test
+    public void testAddedCosmetics() {
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/allCosmetics"),
+                HttpMethod.GET, entity, String.class);
+        assertTrue(response.getBody().contains("Carmen"));
+        assertTrue(response.getBody().contains("Mari"));
+        assertEquals("14456789", cosmeticController.getCosmetic(cosmeticController.getCosmeticId("carmen.karjane@gmail.com")).getPhoneNumber());
+        assertEquals("58392033", cosmeticController.getCosmetic(cosmeticController.getCosmeticId("mari.paasuke@gmail.com")).getPhoneNumber());
+        assertEquals(2, cosmeticController.getAllCosmetics().size());
+    }
+
+    @SneakyThrows
+    @Test
+    public void testAddNewCosmeticSuccess() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367733");
+        newCosmetic.setEmail("magnus.kringel@gmail.com");
+        newCosmetic.setIdCode("50102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Newpassword3"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("0", response.getBody());
+        assertEquals("Magnus", cosmeticController
+                .getCosmetic(cosmeticController.getCosmeticId("magnus.kringel@gmail.com")).getFirstName());
+    }
+
+    @Test
+    public void testAddExistingCosmetic() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367733");
+        newCosmetic.setEmail("carmen.karjane@gmail.com");
+        newCosmetic.setIdCode("50102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Newpassword3"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("1", response.getBody());
+    }
+
+    @Test
+    public void testAddCosmeticWithTakenPassword() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367733");
+        newCosmetic.setEmail("magnus.kringel@gmail.com");
+        newCosmetic.setIdCode("50102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Moraigofly5"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("2", response.getBody());
+    }
+
+    @Test
+    public void testAddNewCosmeticInvalidPassword() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367733");
+        newCosmetic.setEmail("magnus.kringel@gmail.com");
+        newCosmetic.setIdCode("50102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Newpassword"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("3", response.getBody());
+    }
+
+    @Test
+    public void testAddNewCosmeticInvalidPhoneNumber() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367");
+        newCosmetic.setEmail("magnus.kringel@gmail.com");
+        newCosmetic.setIdCode("50102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Newpassword3"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("4", response.getBody());
+    }
+
+    @Test
+    public void testAddNewCosmeticInvalidIdCode() {
+        Cosmetic newCosmetic = new Cosmetic();
+        newCosmetic.setFirstName("Magnus");
+        newCosmetic.setLastName("Kringel");
+        newCosmetic.setPhoneNumber("46367733");
+        newCosmetic.setEmail("magnus.kringel@gmail.com");
+        newCosmetic.setIdCode("70102145748");
+        newCosmetic.setDateOfBirth(new Date(11, 4, 4));
+        newCosmetic.setHomeAddress("Hoki tee 43");
+
+        HttpEntity<Cosmetic> entity = new HttpEntity<Cosmetic>(newCosmetic, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                createURLWithPort("/api/addCosmetic?password=Newpassword3"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals("200 OK", response.getStatusCode().toString());
+        assertEquals("5", response.getBody());
+    }
+
+    @SneakyThrows
+    @Test
+    public void removeCosmeticSuccess() {
+        cosmeticController.removeCosmetic(cosmeticController.getCosmeticId("carmen.karjane@gmail.com"));
+        assertEquals(1, cosmeticRepository.findAll().size());
+        assertThrows(CannotFindCosmeticException.class, () -> cosmeticController.getCosmetic(cosmeticController.getCosmeticId("carmen.karjane@gmail.com")));
     }
 }

@@ -22,7 +22,7 @@ public class ValidityCheck {
             return false;
         }
         for (int i = 0; i < password.length(); i++) {
-            if (alphabet.contains(password.substring(i, i + 1))) {
+            if (alphabet.contains(password.substring(i, i + 1).toLowerCase())) {
                 counter++;
             }
         }
